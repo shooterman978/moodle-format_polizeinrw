@@ -25,4 +25,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Kursformat Polizei NRW';
+$string['pluginname'] = 'Polizei NRW Course Format';
+
+$string['sectionname'] = 'Section Name';
+
+// Course format options.
+$string['courseindex'] = 'Course index';
+$string['courseindex_help'] = 'Enable or disable the course index sidebar. The course index shows a navigation tree of all course sections and activities.';
