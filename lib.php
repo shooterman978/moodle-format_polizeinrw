@@ -30,12 +30,35 @@ require_once($CFG->dirroot . '/course/format/lib.php');
 class format_polizeinrw extends core_courseformat\base {
 
     /**
+     * Returns true if this course format uses sections.
+     *
+     * @return bool
+     */
+    public function uses_sections() {
+        return true;
+    }
+
+    /**
      * Returns true if the format uses the legacy activity indentation.
      *
      * @return bool
      */
     public function uses_indentation(): bool {
         return false;
+    }
+
+    /**
+     * Returns true if the format uses the course index.
+     *
+     * @return bool
+     */
+    public function uses_course_index() {
+        $course = $this->get_course();
+        // Check if the course has the option set, default to true if not set.
+        if (isset($course->courseindex)) {
+            return (bool)$course->courseindex;
+        }
+        return true;
     }
 
     /**
@@ -46,13 +69,55 @@ class format_polizeinrw extends core_courseformat\base {
      *
      * @return stdClass
      */
-    public function supports_ajax(): bool {
-
+    public function supports_ajax() {
         $ajaxsupport = new stdClass();
         $ajaxsupport->capable = true;
-
         return $ajaxsupport;
     }
 
-}
+    /**
+     * Returns true if the format supports components.
+     *
+     * @return bool
+     */
+    public function supports_components() {
+        return true;
+    }
 
+    /**
+     * Definitions of the additional options that this course format uses for course.
+     *
+     * @param bool $foreditform If true, returns options for the edit form
+     * @return array of options
+     */
+    public function course_format_options($foreditform = false) {
+        static $courseformatoptions = false;
+        if ($courseformatoptions === false) {
+            $courseformatoptions = [
+                'courseindex' => [
+                    'default' => 1,
+                    'type' => PARAM_INT,
+                ],
+            ];
+        }
+        if ($foreditform && !isset($courseformatoptions['courseindex']['label'])) {
+            $courseformatoptionsedit = [
+                'courseindex' => [
+                    'label' => new \lang_string('courseindex', 'format_polizeinrw'),
+                    'help' => 'courseindex',
+                    'help_component' => 'format_polizeinrw',
+                    'element_type' => 'select',
+                    'element_attributes' => [
+                        [
+                            0 => new \lang_string('no'),
+                            1 => new \lang_string('yes'),
+                        ],
+                    ],
+                ],
+            ];
+            $courseformatoptions = array_merge_recursive($courseformatoptions, $courseformatoptionsedit);
+        }
+        return $courseformatoptions;
+    }
+
+}
