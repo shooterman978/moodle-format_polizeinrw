@@ -1,0 +1,9 @@
+/* Polizei NRW course format - Section Styling */
+
+/* Section mit eigener Klasse format-polizeinrw-section */
+.format-polizeinrw-section {
+    border-left: 3px solid #0066cc;
+    padding-left: 15px;
+    margin-bottom: 20px;
+}
+

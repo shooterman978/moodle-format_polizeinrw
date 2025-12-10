@@ -28,7 +28,22 @@ defined('MOODLE_INTERNAL') || die();
 $string['pluginname'] = 'Polizei NRW Course Format';
 
 $string['sectionname'] = 'Section Name';
+$string['section0name'] = 'General';
+$string['newsection'] = 'New section';
+$string['hidefromothers'] = 'Hide from others';
+$string['hidefromothers_help'] = 'Hide the section from other users. This is useful for sections that are not relevant to the course.';
+$string['showfromothers'] = 'Show to others';
+$string['showfromothers_help'] = 'Show the section to other users. This is useful for sections that are not relevant to the course.';
 
 // Course format options.
 $string['courseindex'] = 'Course index';
 $string['courseindex_help'] = 'Enable or disable the course index sidebar. The course index shows a navigation tree of all course sections and activities.';
+
+// Section image.
+$string['setimage'] = 'Set section image';
+$string['sectionimage'] = 'Section image';
+$string['sectionimage_help'] = 'Upload an image for this section. The image will be displayed in the section header.';
+$string['imagesaved'] = 'Image saved successfully';
+$string['imagedeleted'] = 'Image deleted successfully';
+$string['deleteimage'] = 'Delete image';
+$string['currentimage'] = 'Current image';

@@ -17,7 +17,9 @@
 namespace format_polizeinrw\output;
 
 use core_courseformat\output\section_renderer;
+use core_courseformat\output\local\content\section as section_base;
 use moodle_page;
+use renderable;
 
 /**
  * Kursformat Polizei NRW content class.
@@ -28,6 +30,29 @@ use moodle_page;
  */
 class renderer extends section_renderer {
 
-    // Override any necessary renderer method here.
+    /**
+     * Render a section object.
+     * This method is called when a section is rendered directly.
+     *
+     * @param section_base $section The section to render
+     * @return string HTML output
+     */
+    protected function render_section(section_base $section): string {
+        debugging("format_polizeinrw: renderer::render_section() called", DEBUG_DEVELOPER);
+        
+        // Check if this is our custom section class.
+        if ($section instanceof \format_polizeinrw\output\courseformat\content\section) {
+            debugging("format_polizeinrw: renderer::render_section() - using our custom section class", DEBUG_DEVELOPER);
+            // Use our custom template.
+            return $this->render_from_template(
+                'format_polizeinrw/local/content/section',
+                $section->export_for_template($this)
+            );
+        }
+        
+        // Fall back to parent rendering.
+        debugging("format_polizeinrw: renderer::render_section() - falling back to parent", DEBUG_DEVELOPER);
+        return parent::render($section);
+    }
 
 }
