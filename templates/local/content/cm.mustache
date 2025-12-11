@@ -1,0 +1,159 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_polizeinrw/local/content/cm
+
+    Displays a course module (activity).
+    
+    - Aktivitäten MIT URL werden als Cards angezeigt
+    - Aktivitäten OHNE URL (Labels, Textfelder, etc.) werden im Moodle-Standard angezeigt
+}}
+{{#editing}}
+    {{< core_courseformat/local/content/divider}}
+        {{$content}}
+            {{#activitychooserbutton}}{{> core_course/activitychooserbutton}}{{/activitychooserbutton}}
+        {{/content}}
+    {{/ core_courseformat/local/content/divider}}
+{{/editing}}
+
+{{! Prüfe ob es eine klickbare Aktivität ist (hat URL und ist nicht inline) }}
+{{#hasurl}}
+    {{^modinline}}
+        {{! === CARD-ANSICHT für klickbare Aktivitäten === }}
+        <div class="polizeinrw-activity-card-wrapper {{#modstealth}}hiddenactivity{{/modstealth}}{{#modhiddenfromstudents}} hiddenactivity{{/modhiddenfromstudents}}" 
+             data-activityname="{{activityname}}" 
+             data-region="activity-card">
+            
+            {{! Bulk Select für Bearbeitung }}
+            {{#cmbulk}}
+                <div class="polizeinrw-bulk-select">
+                    {{$ core_courseformat/local/content/cm/bulkselect }}
+                        {{> core_courseformat/local/content/cm/bulkselect }}
+                    {{/ core_courseformat/local/content/cm/bulkselect }}
+                </div>
+            {{/cmbulk}}
+
+            {{! Die Card selbst }}
+            <div class="polizeinrw-activity-card">
+                {{! Link zur Aktivität }}
+                {{#cmname}}
+                    {{#url}}
+                        <a href="{{{.}}}" class="polizeinrw-card-link">
+                    {{/url}}
+                {{/cmname}}
+                
+                {{! Card Body mit Icon }}
+                <div class="polizeinrw-card-body">
+                    {{#cmname}}
+                        {{#activityicon}}
+                            <div class="polizeinrw-card-icon">
+                                <img src="{{{icon}}}" 
+                                     class="polizeinrw-activity-icon {{iconclass}}" 
+                                     alt="{{pluginname}}"
+                                     data-region="activity-icon">
+                            </div>
+                        {{/activityicon}}
+                    {{/cmname}}
+                </div>
+
+                {{#cmname}}
+                    {{#url}}
+                        </a>
+                    {{/url}}
+                {{/cmname}}
+
+                {{! Visibility Badge (versteckt) }}
+                {{#modhiddenfromstudents}}
+                    <div class="polizeinrw-visibility-badge">
+                        {{#pix}}t/show, core{{/pix}}
+                    </div>
+                {{/modhiddenfromstudents}}
+
+                {{! Action Menu für Bearbeitung }}
+                {{#controlmenu}}
+                    <div class="polizeinrw-card-actions">
+                        {{$ core_courseformat/local/content/cm/controlmenu }}
+                            {{> core_courseformat/local/content/cm/controlmenu }}
+                        {{/ core_courseformat/local/content/cm/controlmenu }}
+                    </div>
+                {{/controlmenu}}
+            </div>
+
+            {{! Completion Badge AUSSERHALB der Card (im Wrapper) für korrekten z-index }}
+            {{#completion}}
+                {{#hascompletion}}
+                    <div class="polizeinrw-completion-badge" data-region="completion-info">
+                        {{$ format_polizeinrw/local/content/cm/completion_badge }}
+                            {{> format_polizeinrw/local/content/cm/completion_badge }}
+                        {{/ format_polizeinrw/local/content/cm/completion_badge }}
+                    </div>
+                {{/hascompletion}}
+            {{/completion}}
+
+            {{! Name unter der Card }}
+            <div class="polizeinrw-card-title">
+                {{#cmname}}
+                    {{#activityname}}
+                        {{$ core/inplace_editable }}
+                            {{> core/inplace_editable }}
+                        {{/ core/inplace_editable }}
+                    {{/activityname}}
+                {{/cmname}}
+            </div>
+
+            {{! Availability Info unter dem Namen }}
+            {{#modavailability}}
+                <div class="polizeinrw-card-availability">
+                    {{$ core_courseformat/local/content/cm/availability }}
+                        {{> core_courseformat/local/content/cm/availability }}
+                    {{/ core_courseformat/local/content/cm/availability }}
+                </div>
+            {{/modavailability}}
+        </div>
+    {{/modinline}}
+{{/hasurl}}
+
+{{! === MOODLE-STANDARD für Inline-Inhalte (Labels, Textfelder, etc.) === }}
+{{#modinline}}
+    <div class="activity-item focus-control {{#modstealth}}hiddenactivity{{/modstealth}}{{#modhiddenfromstudents}}hiddenactivity{{/modhiddenfromstudents}} activityinline" 
+         data-activityname="{{activityname}}" 
+         data-region="activity-card">
+        {{#cmbulk}}
+            {{$ core_courseformat/local/content/cm/bulkselect }}
+                {{> core_courseformat/local/content/cm/bulkselect }}
+            {{/ core_courseformat/local/content/cm/bulkselect }}
+        {{/cmbulk}}
+        {{$ core_courseformat/local/content/cm/activity }}
+            {{> core_courseformat/local/content/cm/activity }}
+        {{/ core_courseformat/local/content/cm/activity }}
+    </div>
+{{/modinline}}
+
+{{! Fallback für Aktivitäten ohne URL die nicht inline sind }}
+{{^hasurl}}
+    {{^modinline}}
+        <div class="activity-item focus-control {{#modstealth}}hiddenactivity{{/modstealth}}{{#modhiddenfromstudents}}hiddenactivity{{/modhiddenfromstudents}}" 
+             data-activityname="{{activityname}}" 
+             data-region="activity-card">
+            {{#cmbulk}}
+                {{$ core_courseformat/local/content/cm/bulkselect }}
+                    {{> core_courseformat/local/content/cm/bulkselect }}
+                {{/ core_courseformat/local/content/cm/bulkselect }}
+            {{/cmbulk}}
+            {{$ core_courseformat/local/content/cm/activity }}
+                {{> core_courseformat/local/content/cm/activity }}
+            {{/ core_courseformat/local/content/cm/activity }}
+        </div>
+    {{/modinline}}
+{{/hasurl}}

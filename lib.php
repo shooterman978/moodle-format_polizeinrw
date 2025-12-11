@@ -145,6 +145,11 @@ class format_polizeinrw extends core_courseformat\base {
         global $PAGE;
         // Load format CSS.
         $PAGE->requires->css('/course/format/polizeinrw/styles.css');
+
+        // Inject course-specific template color as CSS custom property via JavaScript.
+        $templatecolor = $this->get_course_template_color();
+        $jscode = "document.documentElement.style.setProperty('--polizeinrw-template-color', '{$templatecolor}');";
+        $PAGE->requires->js_init_code($jscode, true);
     }
 
 
@@ -155,6 +160,8 @@ class format_polizeinrw extends core_courseformat\base {
      * @return array of options
      */
     public function course_format_options($foreditform = false) {
+        global $PAGE;
+
         static $courseformatoptions = false;
         if ($courseformatoptions === false) {
             $courseformatoptions = [
@@ -162,9 +169,19 @@ class format_polizeinrw extends core_courseformat\base {
                     'default' => 1,
                     'type' => PARAM_INT,
                 ],
+                'templatecolor' => [
+                    'default' => 1,
+                    'type' => PARAM_INT,
+                ],
             ];
         }
         if ($foreditform && !isset($courseformatoptions['courseindex']['label'])) {
+            // Build color choices from admin settings.
+            $coloroptions = $this->get_template_color_options();
+
+            // Load the colorpicker JavaScript module.
+            $this->load_colorpicker_js();
+
             $courseformatoptionsedit = [
                 'courseindex' => [
                     'label' => new \lang_string('courseindex', 'format_polizeinrw'),
@@ -178,10 +195,105 @@ class format_polizeinrw extends core_courseformat\base {
                         ],
                     ],
                 ],
+                'templatecolor' => [
+                    'label' => new \lang_string('templatecolor_course', 'format_polizeinrw'),
+                    'help' => 'templatecolor_course',
+                    'help_component' => 'format_polizeinrw',
+                    'element_type' => 'select',
+                    'element_attributes' => [
+                        $coloroptions,
+                    ],
+                ],
             ];
             $courseformatoptions = array_merge_recursive($courseformatoptions, $courseformatoptionsedit);
         }
         return $courseformatoptions;
+    }
+
+    /**
+     * Load the color picker JavaScript module.
+     */
+    protected function load_colorpicker_js() {
+        global $PAGE;
+
+        // Build color data for JavaScript.
+        $colors = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $color = get_config('format_polizeinrw', 'templatecolor' . $i);
+            if (empty($color)) {
+                $defaultcolors = [
+                    1 => '#004B87',
+                    2 => '#FFD700',
+                    3 => '#28A745',
+                    4 => '#DC3545',
+                    5 => '#6C757D',
+                ];
+                $color = $defaultcolors[$i];
+            }
+            $colors[] = [
+                'index' => $i,
+                'color' => $color,
+                'label' => get_string('templatecolor', 'format_polizeinrw', $i),
+            ];
+        }
+
+        // Load the AMD module with color data.
+        $PAGE->requires->js_call_amd('format_polizeinrw/colorpicker', 'init', [$colors]);
+    }
+
+    /**
+     * Get the template color options for the course settings dropdown.
+     *
+     * @return array Array of color options with index => label
+     */
+    protected function get_template_color_options() {
+        $options = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $color = get_config('format_polizeinrw', 'templatecolor' . $i);
+            if (empty($color)) {
+                // Default colors if not set.
+                $defaultcolors = [
+                    1 => '#004B87',
+                    2 => '#FFD700',
+                    3 => '#28A745',
+                    4 => '#DC3545',
+                    5 => '#6C757D',
+                ];
+                $color = $defaultcolors[$i];
+            }
+            $options[$i] = get_string('templatecolor_option', 'format_polizeinrw', ['num' => $i, 'color' => $color]);
+        }
+        return $options;
+    }
+
+    /**
+     * Get the selected template color for this course.
+     *
+     * @return string The hex color code
+     */
+    public function get_course_template_color() {
+        $course = $this->get_course();
+        $colorindex = isset($course->templatecolor) ? (int)$course->templatecolor : 1;
+
+        // Ensure valid index.
+        if ($colorindex < 1 || $colorindex > 5) {
+            $colorindex = 1;
+        }
+
+        $color = get_config('format_polizeinrw', 'templatecolor' . $colorindex);
+        if (empty($color)) {
+            // Default colors if not set.
+            $defaultcolors = [
+                1 => '#004B87',
+                2 => '#FFD700',
+                3 => '#28A745',
+                4 => '#DC3545',
+                5 => '#6C757D',
+            ];
+            $color = $defaultcolors[$colorindex];
+        }
+
+        return $color;
     }
 
 }

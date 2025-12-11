@@ -1,0 +1,144 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_polizeinrw/local/content/section/content
+
+    The internal content of a section.
+    
+    Dies ist das Template für den Section-Inhalt im Polizei NRW Format.
+    Es verwendet das Grid-Layout für die Aktivitäten-Cards.
+}}
+<div class="course-section-header d-flex align-items-center"
+     data-for="section_title"
+     data-id="{{id}}"
+     data-number="{{num}}"
+>
+    {{#singleheader}}
+        {{$ format_polizeinrw/local/content/section/header }}
+            {{> format_polizeinrw/local/content/section/header }}
+        {{/ format_polizeinrw/local/content/section/header }}
+    {{/singleheader}}
+    {{#header}}
+        {{$ format_polizeinrw/local/content/section/header }}
+            {{> format_polizeinrw/local/content/section/header }}
+        {{/ format_polizeinrw/local/content/section/header }}
+    {{/header}}
+    {{^singleheader}}
+        {{#restrictionlock}}
+            <div class="align-self-center ms-2">
+                {{#pix}}t/unlock, core{{/pix}}
+            </div>
+        {{/restrictionlock}}
+    {{/singleheader}}
+    <div data-region="sectionbadges" class="sectionbadges d-flex align-items-center">
+        {{$ core_courseformat/local/content/section/badges }}
+            {{> core_courseformat/local/content/section/badges }}
+        {{/ core_courseformat/local/content/section/badges }}
+    </div>
+    
+    {{! Spacer um Elemente nach rechts zu schieben }}
+    <div class="flex-grow-1"></div>
+    
+    {{! Collapsemenu (Alles einklappen) - VOR dem Toggle-Button }}
+    {{#collapsemenu}}
+        {{^displayonesection}}
+            <div class="polizeinrw-collapse-menu me-3">
+                <a id="collapsesections"
+                   class="section-collapsemenu"
+                   href="#"
+                   aria-expanded="true"
+                   role="button"
+                   data-toggle="toggleall"
+                >
+                    <span class="collapseall text-nowrap">{{#str}}collapseall{{/str}}</span>
+                    <span class="expandall text-nowrap">{{#str}}expandall{{/str}}</span>
+                </a>
+            </div>
+        {{/displayonesection}}
+    {{/collapsemenu}}
+    
+    {{! Control Menu (Bearbeiten) }}
+    {{#controlmenu}}
+        {{^displayonesection}}
+            <div class="polizeinrw-control-menu me-2">
+                {{$ core_courseformat/local/content/section/controlmenu }}
+                    {{> core_courseformat/local/content/section/controlmenu }}
+                {{/ core_courseformat/local/content/section/controlmenu }}
+            </div>
+        {{/displayonesection}}
+    {{/controlmenu}}
+    
+    {{! Toggle Button GANZ RECHTS }}
+    {{#header}}
+        {{^headerdisplaymultipage}}
+            {{^sitehome}}
+                {{^displayonesection}}
+                    <a role="button"
+                        data-toggle="collapse"
+                        data-for="sectiontoggler"
+                        href="#coursecontentcollapseid{{id}}"
+                        id="collapsesectionid{{id}}"
+                        aria-expanded="{{^contentcollapsed}}true{{/contentcollapsed}}{{#contentcollapsed}}false{{/contentcollapsed}}"
+                        aria-controls="coursecontentcollapseid{{id}}"
+                        class="btn btn-icon icons-collapse-expand justify-content-center polizeinrw-section-toggle
+                            {{#contentcollapsed}} collapsed {{/contentcollapsed}}"
+                        aria-label="{{name}}">
+                        <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, core {{/str}}">
+                            {{#pix}} t/expandedchevron, core {{/pix}}
+                            <span class="sr-only">{{#str}} collapse, core {{/str}}</span>
+                        </span>
+                        <span class="collapsed-icon icon-no-margin p-2" title="{{#str}} expand, core {{/str}}">
+                            <span class="dir-rtl-hide">{{#pix}} t/collapsedchevron, core {{/pix}}</span>
+                            <span class="dir-ltr-hide">{{#pix}} t/collapsedchevron_rtl, core {{/pix}}</span>
+                            <span class="sr-only">{{#str}} expand, core {{/str}}</span>
+                        </span>
+                    </a>
+                {{/displayonesection}}
+            {{/sitehome}}
+        {{/headerdisplaymultipage}}
+    {{/header}}
+</div>
+<div id="coursecontentcollapseid{{id}}"
+     class="content {{^iscoursedisplaymultipage}}{{^sitehome}}{{^displayonesection}}course-content-item-content collapse {{^contentcollapsed}}show{{/contentcollapsed}}{{/displayonesection}}{{/sitehome}}{{/iscoursedisplaymultipage}}">
+    <div class="{{#hasavailability}}description{{/hasavailability}} my-3" data-for="sectioninfo">
+        {{#isstealth}}
+        <div class="alert alert-warning">
+            {{#str}} orphansectionwarning, core_courseformat {{/str}}
+        </div>
+        {{/isstealth}}
+        {{#summary}}
+            {{$ core_courseformat/local/content/section/summary }}
+                {{> core_courseformat/local/content/section/summary }}
+            {{/ core_courseformat/local/content/section/summary }}
+        {{/summary}}
+        {{#availability}}
+            {{$ core_courseformat/local/content/section/availability }}
+                {{> core_courseformat/local/content/section/availability }}
+            {{/ core_courseformat/local/content/section/availability }}
+        {{/availability}}
+    </div>
+    {{#cmsummary}}
+        {{$ core_courseformat/local/content/section/cmsummary }}
+            {{> core_courseformat/local/content/section/cmsummary }}
+        {{/ core_courseformat/local/content/section/cmsummary }}
+    {{/cmsummary}}
+    {{! Hier verwenden wir unser eigenes cmlist Template für das Card-Grid }}
+    {{#cmlist}}
+        {{$ format_polizeinrw/local/content/section/cmlist }}
+            {{> format_polizeinrw/local/content/section/cmlist }}
+        {{/ format_polizeinrw/local/content/section/cmlist }}
+    {{/cmlist}}
+    {{{cmcontrols}}}
+</div>
+

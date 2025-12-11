@@ -1,0 +1,115 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_polizeinrw/local/content/cm/completion_badge
+
+    Displays a simple completion indicator circle for activity cards.
+    
+    - Abgeschlossen: Gelber Kreis mit Häkchen ✓
+    - Nicht abgeschlossen: Weißer Kreis mit grauem Häkchen
+
+    Context variables (from completion object):
+    * overallcomplete - Whether the activity is complete
+    * istrackeduser - Whether user is tracked for completion
+    * ismanual - Whether manual completion
+    * cmid - Course module ID
+    * activityname - Activity name
+}}
+{{#istrackeduser}}
+    {{! === MANUELLER COMPLETION TOGGLE === }}
+    {{#ismanual}}
+        {{#overallcomplete}}
+            {{! Abgeschlossen - Gelber Kreis mit Häkchen }}
+            <button class="polizeinrw-completion-circle polizeinrw-complete" 
+                    data-action="toggle-manual-completion" 
+                    data-toggletype="manual:undo" 
+                    data-cmid="{{cmid}}" 
+                    data-activityname="{{activityname}}"
+                    title="{{#str}}completion_complete_click, format_polizeinrw{{/str}}"
+                    aria-label="{{#str}}completion_complete_click, format_polizeinrw{{/str}}"
+                    role="checkbox"
+                    aria-checked="true">
+                <span class="polizeinrw-checkmark" aria-hidden="true">✓</span>
+                <span class="polizeinrw-tooltip">{{#str}}completion_complete, format_polizeinrw{{/str}}</span>
+            </button>
+        {{/overallcomplete}}
+        {{^overallcomplete}}
+            {{! Nicht abgeschlossen - Weißer Kreis mit grauem Häkchen }}
+            <button class="polizeinrw-completion-circle polizeinrw-incomplete" 
+                    data-action="toggle-manual-completion" 
+                    data-toggletype="manual:mark-done" 
+                    data-cmid="{{cmid}}" 
+                    data-activityname="{{activityname}}"
+                    title="{{#str}}completion_incomplete_click, format_polizeinrw{{/str}}"
+                    aria-label="{{#str}}completion_incomplete_click, format_polizeinrw{{/str}}"
+                    role="checkbox"
+                    aria-checked="false">
+                <span class="polizeinrw-checkmark" aria-hidden="true">✓</span>
+                <span class="polizeinrw-tooltip">{{#str}}completion_incomplete, format_polizeinrw{{/str}}</span>
+            </button>
+        {{/overallcomplete}}
+    {{/ismanual}}
+    
+    {{! === AUTOMATISCHER COMPLETION STATUS === }}
+    {{#isautomatic}}
+        {{#overallcomplete}}
+            {{! Abgeschlossen - Gelber Kreis mit Häkchen }}
+            <span class="polizeinrw-completion-circle polizeinrw-complete polizeinrw-auto" 
+                  title="{{#str}}completion_complete, format_polizeinrw{{/str}}"
+                  role="img"
+                  aria-label="{{#str}}completion_complete, format_polizeinrw{{/str}}">
+                <span class="polizeinrw-checkmark" aria-hidden="true">✓</span>
+                <span class="polizeinrw-tooltip">{{#str}}completion_complete, format_polizeinrw{{/str}}</span>
+            </span>
+        {{/overallcomplete}}
+        {{^overallcomplete}}
+            {{! Nicht abgeschlossen - Weißer Kreis mit grauem Häkchen }}
+            <span class="polizeinrw-completion-circle polizeinrw-incomplete polizeinrw-auto" 
+                  title="{{#str}}completion_incomplete, format_polizeinrw{{/str}}"
+                  role="img"
+                  aria-label="{{#str}}completion_incomplete, format_polizeinrw{{/str}}">
+                <span class="polizeinrw-checkmark" aria-hidden="true">✓</span>
+                <span class="polizeinrw-tooltip">{{#str}}completion_incomplete, format_polizeinrw{{/str}}</span>
+            </span>
+        {{/overallcomplete}}
+    {{/isautomatic}}
+{{/istrackeduser}}
+
+{{! Nicht getrackter Benutzer - nur Status anzeigen ohne Interaktion }}
+{{^istrackeduser}}
+    {{#overallcomplete}}
+        <span class="polizeinrw-completion-circle polizeinrw-complete polizeinrw-readonly"
+              title="{{#str}}completion_complete, format_polizeinrw{{/str}}"
+              role="img"
+              aria-label="{{#str}}completion_complete, format_polizeinrw{{/str}}">
+            <span class="polizeinrw-checkmark" aria-hidden="true">✓</span>
+            <span class="polizeinrw-tooltip">{{#str}}completion_complete, format_polizeinrw{{/str}}</span>
+        </span>
+    {{/overallcomplete}}
+    {{^overallcomplete}}
+        <span class="polizeinrw-completion-circle polizeinrw-incomplete polizeinrw-readonly"
+              title="{{#str}}completion_incomplete, format_polizeinrw{{/str}}"
+              role="img"
+              aria-label="{{#str}}completion_incomplete, format_polizeinrw{{/str}}">
+            <span class="polizeinrw-checkmark" aria-hidden="true">✓</span>
+            <span class="polizeinrw-tooltip">{{#str}}completion_incomplete, format_polizeinrw{{/str}}</span>
+        </span>
+    {{/overallcomplete}}
+{{/istrackeduser}}
+
+{{#js}}
+require(['core_course/manual_completion_toggle'], function(toggle) {
+    toggle.init();
+});
+{{/js}}

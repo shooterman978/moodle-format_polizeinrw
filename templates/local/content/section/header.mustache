@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_polizeinrw/local/content/section/header
+
+    Displays a course section header for Polizei NRW format.
+    
+    Änderungen:
+    - Titel ist kein Link mehr, nur Text
+    - Toggle-Button ist separat im content.mustache
+}}
+{{#sectionbulk}}
+{{$ core_courseformat/local/content/section/bulkselect }}
+    {{> core_courseformat/local/content/section/bulkselect }}
+{{/ core_courseformat/local/content/section/bulkselect }}
+{{/sectionbulk}}
+{{#headerdisplaymultipage}}
+    {{^displayonesection}}
+        <h3 id="sectionid-{{id}}-title" class="h4 sectionname polizeinrw-section-title mb-0">
+            {{name}}
+        </h3>
+    {{/displayonesection}}
+{{/headerdisplaymultipage}}
+{{^headerdisplaymultipage}}
+    {{#sitehome}}
+        <h2 id="sectionid-{{id}}-title" class="h3 sectionname polizeinrw-section-title mb-0">
+            {{name}}
+        </h2>
+    {{/sitehome}}
+    {{^sitehome}}
+        {{^displayonesection}}
+            {{! Nur der Titel - Toggle wird separat gerendert }}
+            <h{{headinglevel}} class="h4 sectionname course-content-item d-flex align-self-stretch align-items-center mb-0 polizeinrw-section-title"
+                id="sectionid-{{id}}-title" data-for="section_title" data-id="{{id}}" data-number="{{num}}">
+                {{name}}
+            </h{{headinglevel}}>
+        {{/displayonesection}}
+    {{/sitehome}}
+{{/headerdisplaymultipage}}

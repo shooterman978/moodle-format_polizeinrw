@@ -47,3 +47,20 @@ $string['imagesaved'] = 'Image saved successfully';
 $string['imagedeleted'] = 'Image deleted successfully';
 $string['deleteimage'] = 'Delete image';
 $string['currentimage'] = 'Current image';
+
+// Completion status strings.
+$string['completion_complete'] = 'Completed';
+$string['completion_incomplete'] = 'Not completed';
+$string['completion_complete_click'] = 'Completed - Click to mark as not done';
+$string['completion_incomplete_click'] = 'Not completed - Click to mark as done';
+
+// Template color settings (Admin).
+$string['templatecolors_heading'] = 'Template Colors';
+$string['templatecolors_heading_desc'] = 'Define up to 5 template colors that can be selected in course settings. These colors will be used as the accent color for course sections and cards.';
+$string['templatecolor'] = 'Template Color {$a}';
+$string['templatecolor_desc'] = 'Select the color for template color {$a}. This color can be chosen in individual course settings.';
+
+// Template color settings (Course).
+$string['templatecolor_course'] = 'Course Color';
+$string['templatecolor_course_help'] = 'Select a template color for this course. The color will be used as the accent color for sections and activity cards.';
+$string['templatecolor_option'] = 'Color {$a->num} ({$a->color})';

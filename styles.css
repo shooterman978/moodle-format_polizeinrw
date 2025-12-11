@@ -1,9 +1,623 @@
-/* Polizei NRW course format - Section Styling */
+/* ============================================
+   Polizei NRW Course Format - Styles
+   ============================================ */
 
-/* Section mit eigener Klasse format-polizeinrw-section */
+/* ============================================
+   CSS Custom Properties (Design Tokens)
+   ============================================ */
+:root {
+    /* Template-Farbe (wird per JavaScript aus den Kurseinstellungen gesetzt) */
+    /* Fallback: Polizei Blau */
+    --polizeinrw-template-color: #004B87;
+    
+    /* Polizei NRW Farben */
+    --polizeinrw-primary: #2d1b4e;
+    --polizeinrw-primary-light: #3d2b5e;
+    /* Akzentfarbe verwendet jetzt die Template-Farbe */
+    --polizeinrw-accent: var(--polizeinrw-template-color);
+    --polizeinrw-completion-yellow: #f7e135;
+    --polizeinrw-completion-check: #2d1b4e;
+    --polizeinrw-card-bg: #ffffff;
+    --polizeinrw-card-shadow: rgba(0, 0, 0, 0.1);
+    --polizeinrw-card-hover-shadow: rgba(0, 0, 0, 0.15);
+    --polizeinrw-text-dark: #333333;
+    --polizeinrw-text-light: #ffffff;
+    --polizeinrw-hidden-opacity: 0.6;
+    
+    /* Card Dimensionen */
+    --polizeinrw-card-width: 180px;
+    --polizeinrw-card-height: 160px;
+    --polizeinrw-card-radius: 16px;
+    --polizeinrw-icon-size: 80px;
+    --polizeinrw-completion-size: 32px;
+    --polizeinrw-grid-gap: 24px;
+}
+
+/* ============================================
+   Section Styling
+   ============================================ */
 .format-polizeinrw-section {
-    border-left: 3px solid #0066cc;
+    border-left: 3px solid var(--polizeinrw-accent);
     padding-left: 15px;
     margin-bottom: 20px;
 }
 
+/* ============================================
+   Activity Grid Layout
+   ============================================ */
+.polizeinrw-activity-grid {
+    display: grid;
+    /* Automatisch so viele Spalten wie passen, mit fester Card-Breite */
+    grid-template-columns: repeat(auto-fill, var(--polizeinrw-card-width));
+    gap: var(--polizeinrw-grid-gap);
+    padding: 20px 0;
+    /* Zentriere die Cards wenn nicht alle Spalten gefüllt sind */
+    justify-content: center;
+}
+
+
+/* ============================================
+   Activity Card Wrapper
+   ============================================ */
+.polizeinrw-activity-card-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    /* WICHTIG: Feste Breite für einheitliche Kacheln */
+    width: var(--polizeinrw-card-width);
+    max-width: 100%;
+}
+
+.polizeinrw-activity-card-wrapper.hiddenactivity {
+    opacity: var(--polizeinrw-hidden-opacity);
+}
+
+/* ============================================
+   Activity Card
+   ============================================ */
+.polizeinrw-activity-card {
+    position: relative;
+    /* WICHTIG: Feste Größe für alle Cards gleich */
+    width: var(--polizeinrw-card-width);
+    height: var(--polizeinrw-card-width);
+    max-width: 100%;
+    background: var(--polizeinrw-card-bg);
+    border-radius: var(--polizeinrw-card-radius);
+    box-shadow: 0 4px 12px var(--polizeinrw-card-shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: visible;
+}
+
+/* Hover auf der CARD-WRAPPER (dem Parent) triggert den Card-Effekt */
+.polizeinrw-activity-card-wrapper:hover .polizeinrw-activity-card {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px var(--polizeinrw-card-hover-shadow);
+}
+
+/* ============================================
+   Card Link (ganzer Card klickbar)
+   ============================================ */
+.polizeinrw-card-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+    border-radius: var(--polizeinrw-card-radius);
+    /* Niedrigerer z-index als Completion Badge */
+    position: relative;
+    z-index: 1;
+}
+
+.polizeinrw-card-link:hover,
+.polizeinrw-card-link:focus {
+    text-decoration: none;
+    color: inherit;
+    outline: none;
+}
+
+.polizeinrw-card-link:focus-visible {
+    outline: 3px solid var(--polizeinrw-accent);
+    outline-offset: 2px;
+}
+
+/* ============================================
+   Card Body (Icon Container)
+   ============================================ */
+.polizeinrw-card-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+}
+
+/* ============================================
+   Activity Icon
+   ============================================ */
+.polizeinrw-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.polizeinrw-activity-icon {
+    width: var(--polizeinrw-icon-size);
+    height: var(--polizeinrw-icon-size);
+    object-fit: contain;
+}
+
+/* ============================================
+   Completion Badge (oben rechts auf der Card)
+   Badge ist jetzt im Wrapper (außerhalb der Card) positioniert
+   ============================================ */
+.polizeinrw-completion-badge {
+    position: absolute;
+    /* Positioniert relativ zum Wrapper, oben rechts auf der Card */
+    top: -8px;
+    right: -8px;
+    /* Hoher z-index - Badge liegt ÜBER allem */
+    z-index: 100;
+    /* Stellt sicher, dass Hover-Events funktionieren */
+    pointer-events: auto;
+}
+
+/* ==== Basis-Styling für Completion Circle ==== */
+.polizeinrw-completion-circle {
+    /* Position für Tooltip */
+    position: relative;
+    /* Feste Größe */
+    width: var(--polizeinrw-completion-size);
+    height: var(--polizeinrw-completion-size);
+    border-radius: 50%;
+    /* Zentrierung */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* Styling */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    /* Transition */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    /* Hoher z-index für Hover-Priorität */
+    z-index: 101;
+}
+
+/* Hover-Effekt: Schatten verstärken */
+.polizeinrw-completion-circle:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    /* Noch höherer z-index bei Hover für Tooltip */
+    z-index: 200;
+}
+
+/* Automatische/Readonly Completion - kein Cursor */
+.polizeinrw-completion-circle.polizeinrw-auto,
+.polizeinrw-completion-circle.polizeinrw-readonly {
+    cursor: default;
+}
+
+/* ==== ABGESCHLOSSEN - Gelber Kreis mit Häkchen ==== */
+.polizeinrw-completion-circle.polizeinrw-complete {
+    background-color: var(--polizeinrw-completion-yellow);
+}
+
+.polizeinrw-completion-circle.polizeinrw-complete .polizeinrw-checkmark {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--polizeinrw-completion-check);
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Verwende ein sauberes Häkchen-Symbol */
+    font-family: Arial, sans-serif;
+}
+
+/* ==== NICHT ABGESCHLOSSEN - Weißer Kreis mit grauem Häkchen ==== */
+.polizeinrw-completion-circle.polizeinrw-incomplete {
+    background-color: #ffffff;
+    border: 2px solid #cccccc;
+}
+
+/* Graues Häkchen für nicht abgeschlossene Aktivitäten */
+.polizeinrw-completion-circle.polizeinrw-incomplete .polizeinrw-checkmark {
+    font-size: 18px;
+    font-weight: 900;
+    color: #cccccc;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+}
+
+/* ==== Hover-Effekte für interaktive Buttons ==== */
+.polizeinrw-completion-circle.polizeinrw-complete:hover:not(.polizeinrw-auto):not(.polizeinrw-readonly) {
+    background-color: #e5ca30;
+}
+
+.polizeinrw-completion-circle.polizeinrw-incomplete:hover:not(.polizeinrw-auto):not(.polizeinrw-readonly) {
+    background-color: #f5f5f5;
+    border-color: #999999;
+}
+
+/* ==== Tooltip für Completion Status ==== */
+.polizeinrw-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 8px;
+    padding: 6px 12px;
+    background-color: #333333;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    /* Versteckt bis Hover */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    /* Kein Pointer Events */
+    pointer-events: none;
+    z-index: 1000;
+}
+
+/* Tooltip-Pfeil */
+.polizeinrw-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333333 transparent transparent transparent;
+}
+
+/* Tooltip bei Hover anzeigen */
+.polizeinrw-completion-circle:hover .polizeinrw-tooltip,
+.polizeinrw-completion-circle:focus .polizeinrw-tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Checkmark und Tooltip dürfen keine Maus-Events abfangen */
+.polizeinrw-completion-circle .polizeinrw-checkmark,
+.polizeinrw-completion-circle .polizeinrw-tooltip {
+    pointer-events: none;
+}
+
+/* ==== Focus Styles für Barrierefreiheit ==== */
+.polizeinrw-completion-circle:focus {
+    outline: 3px solid var(--polizeinrw-accent);
+    outline-offset: 2px;
+}
+
+.polizeinrw-completion-circle:focus:not(:focus-visible) {
+    outline: none;
+}
+
+.polizeinrw-completion-circle:focus-visible {
+    outline: 3px solid var(--polizeinrw-accent);
+    outline-offset: 2px;
+}
+
+/* Reduzierte Bewegung für Barrierefreiheit */
+@media (prefers-reduced-motion: reduce) {
+    .polizeinrw-tooltip {
+        transition: none;
+    }
+}
+
+/* ============================================
+   Visibility Badge (versteckt)
+   ============================================ */
+.polizeinrw-visibility-badge {
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    z-index: 10;
+    width: 28px;
+    height: 28px;
+    background: #ff9800;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.polizeinrw-visibility-badge img {
+    width: 16px;
+    height: 16px;
+    filter: brightness(0) invert(1);
+}
+
+/* ============================================
+   Card Title (Name unter der Card)
+   ============================================ */
+.polizeinrw-card-title {
+    margin-top: 12px;
+    padding: 0 8px;
+    max-width: var(--polizeinrw-card-width);
+    width: 100%;
+}
+
+.polizeinrw-card-title .inplaceeditable {
+    display: block;
+}
+
+.polizeinrw-card-title a,
+.polizeinrw-card-title .inplaceeditable a {
+    color: var(--polizeinrw-text-dark);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+}
+
+.polizeinrw-card-title a:hover {
+    color: var(--polizeinrw-accent);
+    text-decoration: underline;
+}
+
+/* ============================================
+   Card Actions (Bearbeitungsmenü)
+   ============================================ */
+.polizeinrw-card-actions {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.polizeinrw-activity-card:hover .polizeinrw-card-actions {
+    opacity: 1;
+}
+
+.polizeinrw-card-actions .dropdown-toggle {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px 8px;
+}
+
+/* ============================================
+   Card Availability Info
+   ============================================ */
+.polizeinrw-card-availability {
+    margin-top: 8px;
+    font-size: 12px;
+    max-width: var(--polizeinrw-card-width);
+}
+
+.polizeinrw-card-availability .badge {
+    font-size: 10px;
+    padding: 4px 8px;
+}
+
+/* ============================================
+   Bulk Select (für Massenbearbeitung)
+   ============================================ */
+.polizeinrw-bulk-select {
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    z-index: 15;
+}
+
+/* ============================================
+   Move Here Indicator
+   ============================================ */
+.polizeinrw-movehere {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+    border: 2px dashed var(--polizeinrw-accent);
+    border-radius: var(--polizeinrw-card-radius);
+    background: rgba(0, 102, 204, 0.05);
+}
+
+.polizeinrw-movehere a.movehere {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================
+   Card Item Wrapper im Grid
+   ============================================ */
+.polizeinrw-card-item {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    /* Stelle sicher, dass das Grid-Item die richtige Größe hat */
+    width: var(--polizeinrw-card-width);
+}
+
+/* ============================================
+   Inline-Aktivitäten (Labels, Textfelder, etc.)
+   Diese werden NICHT als Cards angezeigt, sondern
+   im Moodle-Standard-Layout (volle Breite)
+   ============================================ */
+
+/* Inline-Aktivitäten nehmen volle Breite im Grid */
+.polizeinrw-card-item:has(.activityinline),
+.polizeinrw-card-item:has(.activity-item:not(.polizeinrw-activity-card-wrapper)) {
+    grid-column: 1 / -1;
+    width: 100%;
+    display: block;
+}
+
+/* Standard Moodle Styling für Inline-Aktivitäten */
+.polizeinrw-activity-grid .activity-item.activityinline {
+    background: transparent;
+    padding: 16px 0;
+    margin: 8px 0;
+    border-bottom: 1px solid #eee;
+    width: 100%;
+}
+
+.polizeinrw-activity-grid .activity-item:not(.polizeinrw-activity-card-wrapper) {
+    width: 100%;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 8px 0;
+}
+
+/* Entferne Card-Styling für Nicht-Card Aktivitäten */
+.polizeinrw-activity-grid .activity-item:not(.polizeinrw-activity-card-wrapper) .activity-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+/* Fallback für Browser ohne :has() Support */
+@supports not selector(:has(*)) {
+    .polizeinrw-card-item.has-inline-activity {
+        grid-column: 1 / -1;
+        width: 100%;
+        display: block;
+    }
+}
+
+/* ============================================
+   Anpassungen für den Bearbeitungsmodus
+   ============================================ */
+.editing .polizeinrw-activity-card {
+    cursor: move;
+}
+
+.editing .polizeinrw-card-actions {
+    opacity: 1;
+}
+
+/* ============================================
+   Dark Theme Support (optional)
+   ============================================ */
+/* Section Background für dunklen Hintergrund wie im Bild */
+.format-polizeinrw .course-content {
+    /* Auskommentiert - kann bei Bedarf aktiviert werden 
+    background-color: var(--polizeinrw-primary);
+    padding: 30px;
+    border-radius: 8px;
+    */
+}
+
+/* Falls dunkler Hintergrund gewünscht, Titel anpassen */
+.format-polizeinrw.dark-theme .polizeinrw-card-title a {
+    color: var(--polizeinrw-text-light);
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+@media print {
+    .polizeinrw-activity-grid {
+        display: block;
+    }
+    
+    .polizeinrw-activity-card-wrapper {
+        display: inline-block;
+        page-break-inside: avoid;
+        margin: 10px;
+    }
+    
+    .polizeinrw-card-actions,
+    .polizeinrw-bulk-select {
+        display: none;
+    }
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+    .polizeinrw-activity-card,
+    .polizeinrw-card-actions {
+        transition: none;
+    }
+    
+    .polizeinrw-activity-card:hover {
+        transform: none;
+    }
+}
+
+/* Focus Styles für Tastaturnavigation */
+.polizeinrw-activity-card:focus-within {
+    outline: 3px solid var(--polizeinrw-accent);
+    outline-offset: 2px;
+}
+
+/* ============================================
+   Color Picker für Kurseinstellungen
+   ============================================ */
+.polizeinrw-colorpicker {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 8px 0;
+}
+
+.polizeinrw-color-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    padding: 0;
+    margin: 0;
+}
+
+.polizeinrw-color-circle:hover {
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.polizeinrw-color-circle.selected {
+    border-color: #333333;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.polizeinrw-color-circle:focus {
+    outline: 3px solid var(--polizeinrw-accent, #0066cc);
+    outline-offset: 3px;
+}
+
+.polizeinrw-color-circle:focus:not(:focus-visible) {
+    outline: none;
+}
+
+.polizeinrw-color-circle:focus-visible {
+    outline: 3px solid var(--polizeinrw-accent, #0066cc);
+    outline-offset: 3px;
+}
