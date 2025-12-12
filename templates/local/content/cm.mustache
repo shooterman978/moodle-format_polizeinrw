@@ -79,16 +79,16 @@
                         {{#pix}}t/show, core{{/pix}}
                     </div>
                 {{/modhiddenfromstudents}}
-
-                {{! Action Menu für Bearbeitung }}
-                {{#controlmenu}}
-                    <div class="polizeinrw-card-actions">
-                        {{$ core_courseformat/local/content/cm/controlmenu }}
-                            {{> core_courseformat/local/content/cm/controlmenu }}
-                        {{/ core_courseformat/local/content/cm/controlmenu }}
-                    </div>
-                {{/controlmenu}}
             </div>
+
+            {{! Action Menu für Bearbeitung AUSSERHALB der Card (im Wrapper) für korrekte Positionierung }}
+            {{#controlmenu}}
+                <div class="polizeinrw-card-actions">
+                    {{$ core_courseformat/local/content/cm/controlmenu }}
+                        {{> core_courseformat/local/content/cm/controlmenu }}
+                    {{/ core_courseformat/local/content/cm/controlmenu }}
+                </div>
+            {{/controlmenu}}
 
             {{! Completion Badge AUSSERHALB der Card (im Wrapper) für korrekten z-index }}
             {{#completion}}

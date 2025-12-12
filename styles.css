@@ -37,9 +37,107 @@
    Section Styling
    ============================================ */
 .format-polizeinrw-section {
-    border-left: 3px solid var(--polizeinrw-accent);
-    padding-left: 15px;
+    position: relative;
+    z-index: 1;
+    /* Stelle sicher, dass Sections keinen Stacking Context erstellen, der Dropdowns überlappt */
+    isolation: auto;
+}
+
+/* Section Content Container - der äußere Container mit Hintergrund */
+.format-polizeinrw-section .section-item.polizeinrw-section-content {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    background-color: #f5f5f5;
+    border-radius: 0px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* overflow: hidden entfernt, damit Dropdown-Menüs nicht abgeschnitten werden */
+    overflow: visible;
     margin-bottom: 20px;
+    /* Überschreibe Standard-Moodle-Styles */
+    padding: 0;
+    border: none;
+}
+
+/* Minimale Höhe für eingeklappte Sections (nur Header sichtbar) */
+.format-polizeinrw-section:has(.content.collapse:not(.show)) .polizeinrw-section-content {
+    min-height: 65px !important;
+    height: 65px !important;
+}
+
+/* Fallback: Minimale Höhe für alle Sections (wird für eingeklappte überschrieben) */
+.format-polizeinrw-section .polizeinrw-section-content {
+    min-height: auto;
+}
+
+/* Linker Rand (farbiger Balken) INNERHALB der Section */
+.polizeinrw-section-bar {
+    flex-shrink: 0;
+    width: 65px!important;
+    background-color: var(--polizeinrw-template-color);
+    overflow: hidden;
+    /* Keine border-radius, da er am linken Rand der Section ist */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Abschnittsbild im Balken */
+.polizeinrw-section-bar .polizeinrw-section-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+    /* Zentrierung */
+    display: block;
+    margin: auto;
+}
+
+/* Innerer Content-Bereich */
+.polizeinrw-section-inner {
+    flex: 1;
+    min-width: 0;
+    padding: 20px;
+    /* overflow: visible, damit Dropdown-Menüs sichtbar sind */
+    overflow: visible;
+    position: relative;
+}
+
+/* Reduziertes Padding für eingeklappte Sections (nur Header sichtbar) */
+/* Wenn der Content-Bereich eingeklappt ist, reduziere das Padding des inneren Containers */
+.format-polizeinrw-section:has(.content.collapse:not(.show)) .polizeinrw-section-inner {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+}
+
+/* Zusätzlich: Reduziere auch die Höhe des Headers für eingeklappte Sections */
+.format-polizeinrw-section:has(.content.collapse:not(.show)) .course-section-header {
+    min-height: auto;
+    padding-left: 0px!important;
+    padding-right: 0px!important;
+    padding-top: 9px!important;
+    padding-bottom: 9px!important;
+}
+
+/* Header-Bereich der Section - muss overflow: visible haben für Dropdowns */
+.polizeinrw-section-inner .course-section-header {
+    overflow: visible;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    /* Minimale Höhe für den Header, damit eingeklappte Sections konsistent sind */
+    min-height: 36px;
+}
+
+/* Minimale Höhe für eingeklappte Sections wird durch min-height: 76px 
+   auf .polizeinrw-section-content gesteuert (siehe oben) */
+
+/* Collapse-Container - muss overflow: visible haben, damit Dropdowns sichtbar sind */
+.format-polizeinrw-section .content.collapse,
+.format-polizeinrw-section .course-content-item-content {
+    overflow: visible !important;
 }
 
 /* ============================================
@@ -50,9 +148,12 @@
     /* Automatisch so viele Spalten wie passen, mit fester Card-Breite */
     grid-template-columns: repeat(auto-fill, var(--polizeinrw-card-width));
     gap: var(--polizeinrw-grid-gap);
-    padding: 20px 0;
+    padding: 20px 20px;
     /* Zentriere die Cards wenn nicht alle Spalten gefüllt sind */
-    justify-content: center;
+    /*justify-content: center;*/
+    /* overflow: visible, damit Dropdown-Menüs nicht abgeschnitten werden */
+    overflow: visible;
+    position: relative;
 }
 
 
@@ -68,6 +169,9 @@
     /* WICHTIG: Feste Breite für einheitliche Kacheln */
     width: var(--polizeinrw-card-width);
     max-width: 100%;
+    /* overflow: visible, damit Dropdown-Menüs nicht abgeschnitten werden */
+    overflow: visible;
+    z-index: 1;
 }
 
 .polizeinrw-activity-card-wrapper.hiddenactivity {
@@ -125,6 +229,12 @@
     outline-offset: 2px;
 }
 
+/* Im Bearbeitungsmodus: Link deaktivieren, damit Bearbeitungs-Icons klickbar sind */
+.editing .polizeinrw-card-link {
+    pointer-events: none;
+    cursor: default;
+}
+
 /* ============================================
    Card Body (Icon Container)
    ============================================ */
@@ -166,6 +276,11 @@
     /* Stellt sicher, dass Hover-Events funktionieren */
     pointer-events: auto;
 }
+.polizeinrw-completion-badge:hover {    
+    transform: translateY(-4px);
+    /*box-shadow: 0 8px 24px var(--polizeinrw-card-hover-shadow);*/
+}
+
 
 /* ==== Basis-Styling für Completion Circle ==== */
 .polizeinrw-completion-circle {
@@ -194,7 +309,7 @@
 
 /* Hover-Effekt: Schatten verstärken */
 .polizeinrw-completion-circle:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    /*box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);*/
     /* Noch höherer z-index bei Hover für Tooltip */
     z-index: 200;
 }
@@ -264,7 +379,7 @@
     font-weight: 500;
     white-space: nowrap;
     border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    /*box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);*/
     /* Versteckt bis Hover */
     opacity: 0;
     visibility: hidden;
@@ -322,6 +437,31 @@
 }
 
 /* ============================================
+   Completion Badge (oben rechts auf der Card)
+   Badge ist jetzt im Wrapper (außerhalb der Card) positioniert
+   ============================================ */
+.polizeinrw-completion-badge {
+    position: absolute;
+    /* Positioniert relativ zum Wrapper, oben rechts auf der Card */
+    top: -8px;
+    right: -8px;
+    /* Hoher z-index - Badge liegt ÜBER allem */
+    z-index: 100;
+    /* Stellt sicher, dass Hover-Events funktionieren */
+    pointer-events: auto;
+}
+
+/* Completion Badge im Bearbeitungsmodus ausblenden */
+.editing .polizeinrw-completion-badge {
+    display: none !important;
+}
+
+.polizeinrw-completion-badge:hover {    
+    transform: translateY(-4px);
+    /*box-shadow: 0 8px 24px var(--polizeinrw-card-hover-shadow);*/
+}
+
+/* ============================================
    Visibility Badge (versteckt)
    ============================================ */
 .polizeinrw-visibility-badge {
@@ -336,7 +476,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /*box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);*/
 }
 
 .polizeinrw-visibility-badge img {
@@ -353,6 +493,9 @@
     padding: 0 8px;
     max-width: var(--polizeinrw-card-width);
     width: 100%;
+    /* Niedrigerer z-index, damit Dropdown-Menüs darüber liegen */
+    position: relative;
+    z-index: 1;
 }
 
 .polizeinrw-card-title .inplaceeditable {
@@ -384,15 +527,34 @@
    ============================================ */
 .polizeinrw-card-actions {
     position: absolute;
+    /* Standard: unten rechts auf der Card (nur bei Hover sichtbar) */
     bottom: 8px;
     right: 8px;
-    z-index: 10;
+    z-index: 100;
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease, top 0.2s ease, bottom 0.2s ease, right 0.2s ease;
+    /* WICHTIG: pointer-events aktivieren, damit Icons klickbar sind */
+    pointer-events: auto;
 }
 
-.polizeinrw-activity-card:hover .polizeinrw-card-actions {
+/* Bei Hover: Bearbeitungsmenü sichtbar (nur außerhalb des Bearbeitungsmodus) */
+.polizeinrw-activity-card-wrapper:hover .polizeinrw-card-actions {
     opacity: 1;
+}
+
+/* Im Bearbeitungsmodus: Bearbeitungsmenü oben rechts (wo das Badge normalerweise ist) */
+/* Position relativ zum Wrapper, genau wie das Badge */
+body.editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions,
+.editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions {
+    opacity: 1 !important;
+    /* Position relativ zum Wrapper, genau wie das Badge - oben rechts auf der Card */
+    position: absolute !important;
+    top: -8px !important;
+    right: -8px !important;
+    bottom: auto !important;
+    left: auto !important;
+    /* Stelle sicher, dass es über der Card liegt */
+    z-index: 200 !important;
 }
 
 .polizeinrw-card-actions .dropdown-toggle {
@@ -400,6 +562,30 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     padding: 4px 8px;
+    /* WICHTIG: pointer-events aktivieren */
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+/* Action Menu und alle Bearbeitungs-Icons müssen klickbar sein */
+.polizeinrw-card-actions .action-menu,
+.polizeinrw-card-actions [id^="action-menu-"],
+.polizeinrw-card-actions .dropdown-toggle,
+.polizeinrw-card-actions button,
+.polizeinrw-card-actions a {
+    pointer-events: auto !important;
+    z-index: 201;
+    position: relative;
+}
+
+/* Dropdown-Menü der Card-Actions muss über allem liegen */
+.polizeinrw-card-actions .dropdown-menu,
+.polizeinrw-card-actions .dropdown-menu.show,
+.polizeinrw-card-actions [id^="action-menu-"] .dropdown-menu,
+.polizeinrw-card-actions [id^="action-menu-"] .dropdown-menu.show {
+    z-index: 10000 !important;
+    position: absolute !important;
+    overflow: visible !important;
 }
 
 /* ============================================
@@ -513,8 +699,101 @@
     cursor: move;
 }
 
-.editing .polizeinrw-card-actions {
-    opacity: 1;
+/* Diese Regel wurde in die spezifischere Regel oben verschoben */
+
+/* Im Bearbeitungsmodus: Card-Link deaktivieren, damit Bearbeitungs-Icons funktionieren */
+.editing .polizeinrw-card-link {
+    pointer-events: none;
+    cursor: default;
+}
+
+/* Im Bearbeitungsmodus: Card-Body sollte auch keine pointer-events blockieren */
+.editing .polizeinrw-card-body {
+    pointer-events: none;
+}
+
+/* Im Bearbeitungsmodus: Alle Bearbeitungs-Elemente müssen klickbar sein */
+.editing .polizeinrw-card-actions,
+.editing .polizeinrw-bulk-select,
+.editing .polizeinrw-visibility-badge,
+.editing .polizeinrw-completion-badge {
+    pointer-events: auto !important;
+    z-index: 200;
+    position: relative;
+}
+
+/* Inplace-Editable (Stift-Icon) muss auch klickbar sein */
+.editing .polizeinrw-card-title .inplaceeditable,
+.editing .polizeinrw-card-title .inplaceeditable a,
+.editing .polizeinrw-card-title a {
+    pointer-events: auto !important;
+    z-index: 200;
+    position: relative;
+}
+
+/* Dropdown-Menüs im Bearbeitungsmodus müssen immer sichtbar sein */
+/* Sehr hoher z-index, damit Dropdowns über allen Sections liegen */
+.format-polizeinrw-section .dropdown-menu,
+.format-polizeinrw-section .dropdown-menu.show {
+    z-index: 9999 !important;
+    position: absolute !important;
+    /* Stelle sicher, dass Dropdowns nicht abgeschnitten werden */
+    overflow: visible !important;
+}
+
+/* Control Menu Dropdowns in Sections - besonders wichtig für eingeklappte Sections */
+.format-polizeinrw-section .polizeinrw-control-menu,
+.format-polizeinrw-section .section-control-menu {
+    position: relative;
+    z-index: 100;
+    overflow: visible;
+}
+
+.format-polizeinrw-section .polizeinrw-control-menu .dropdown-menu,
+.format-polizeinrw-section .section-control-menu .dropdown-menu,
+.format-polizeinrw-section .polizeinrw-control-menu .dropdown-menu.show,
+.format-polizeinrw-section .section-control-menu .dropdown-menu.show {
+    z-index: 9999 !important;
+    /* Stelle sicher, dass Dropdowns auch bei eingeklappten Sections sichtbar sind */
+    position: absolute !important;
+    overflow: visible !important;
+}
+
+/* Action Menu Dropdowns (für Section Control Menu) */
+.format-polizeinrw-section .action-menu .dropdown-menu,
+.format-polizeinrw-section .action-menu .dropdown-menu.show,
+.format-polizeinrw-section [id^="action-menu-"] .dropdown-menu,
+.format-polizeinrw-section [id^="action-menu-"] .dropdown-menu.show {
+    z-index: 9999 !important;
+    position: absolute !important;
+    overflow: visible !important;
+}
+
+/* Stelle sicher, dass Sections selbst keinen zu hohen z-index haben */
+.format-polizeinrw-section {
+    position: relative;
+    z-index: 1;
+}
+
+/* Wenn eine Section ein geöffnetes Dropdown hat, erhöhe den z-index temporär */
+.format-polizeinrw-section:has(.dropdown-menu.show) {
+    z-index: 100;
+}
+
+/* Section-Liste und Course-Format-Container - niedriger z-index, damit Dropdowns darüber liegen */
+.format-polizeinrw ul[data-for="course_sectionlist"],
+.format-polizeinrw #course-format-,
+.format-polizeinrw [id^="course-format-"] {
+    position: relative;
+    z-index: 1;
+}
+
+/* Stelle sicher, dass alle Dropdown-Menüs im Format-Container hohen z-index haben */
+.format-polizeinrw .dropdown-menu,
+.format-polizeinrw .dropdown-menu.show,
+.format-polizeinrw [id^="action-menu-"] .dropdown-menu,
+.format-polizeinrw [id^="action-menu-"] .dropdown-menu.show {
+    z-index: 9999 !important;
 }
 
 /* ============================================
@@ -591,20 +870,20 @@
     border-radius: 50%;
     border: 3px solid transparent;
     cursor: pointer;
-    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    /*transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;*/
+    /*box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);*/
     padding: 0;
     margin: 0;
 }
 
 .polizeinrw-color-circle:hover {
     transform: scale(1.15);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    /*box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);*/
 }
 
 .polizeinrw-color-circle.selected {
     border-color: #333333;
-    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3);
+    /*box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3);*/
     transform: scale(1.1);
 }
 

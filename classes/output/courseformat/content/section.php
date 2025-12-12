@@ -57,9 +57,55 @@ class section extends section_base {
     public function export_for_template(renderer_base $output): \stdClass {
         $data = parent::export_for_template($output);
         
-        // Hier können wir zusätzliche Daten hinzufügen, die im Template verwendet werden sollen
+        // Abschnittsbild hinzufügen, falls vorhanden
+        $data->sectionimageurl = $this->get_section_image_url($output);
         
         return $data;
+    }
+
+    /**
+     * Get the section image URL if an image is set for this section.
+     *
+     * @param renderer_base $output The renderer
+     * @return string|null The image URL or null if no image is set
+     */
+    protected function get_section_image_url(renderer_base $output): ?string {
+        global $CFG;
+        
+        $section = $this->section;
+        if (!$section || $section->section == 0) {
+            return null;
+        }
+        
+        $course = $this->format->get_course();
+        $context = \context_course::instance($course->id);
+        
+        $fs = get_file_storage();
+        $files = $fs->get_area_files(
+            $context->id,
+            'format_polizeinrw',
+            'sectionimage',
+            $section->id,
+            'id',
+            false
+        );
+        
+        if (empty($files)) {
+            return null;
+        }
+        
+        $file = reset($files);
+        $imageurl = \moodle_url::make_pluginfile_url(
+            $file->get_contextid(),
+            $file->get_component(),
+            $file->get_filearea(),
+            $file->get_itemid(),
+            $file->get_filepath(),
+            $file->get_filename(),
+            false // forcedownload = false for images
+        );
+        
+        return $imageurl->out(false);
     }
 }
 

@@ -30,13 +30,22 @@
     data-sectionname="{{sectionname}}"
     {{#isstealth}} data-orphan="true" {{/isstealth}}
 >
-    {{! Farbiger Balken links }}
-    <div class="polizeinrw-section-bar"></div>
-    
     <div class="section-item polizeinrw-section-content">
-        {{$ format_polizeinrw/local/content/section/content }}
-            {{> format_polizeinrw/local/content/section/content }}
-        {{/ format_polizeinrw/local/content/section/content }}
+        {{! Farbiger Balken links INNERHALB der Section mit optionalem Abschnittsbild }}
+        <div class="polizeinrw-section-bar">
+            {{#sectionimageurl}}
+                <img src="{{sectionimageurl}}" 
+                     alt="{{sectionname}}" 
+                     class="polizeinrw-section-image"
+                     loading="lazy">
+            {{/sectionimageurl}}
+        </div>
+        
+        <div class="polizeinrw-section-inner">
+            {{$ format_polizeinrw/local/content/section/content }}
+                {{> format_polizeinrw/local/content/section/content }}
+            {{/ format_polizeinrw/local/content/section/content }}
+        </div>
     </div>
 
     {{#insertafter}}
