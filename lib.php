@@ -146,9 +146,15 @@ class format_polizeinrw extends core_courseformat\base {
         // Load format CSS.
         $PAGE->requires->css('/course/format/polizeinrw/styles.css');
 
-        // Inject course-specific template color as CSS custom property via JavaScript.
-        $templatecolor = $this->get_course_template_color();
-        $jscode = "document.documentElement.style.setProperty('--polizeinrw-template-color', '{$templatecolor}');";
+        // Inject course-specific template colors as CSS custom properties via JavaScript.
+        $templatecolors = $this->get_course_template_colors();
+        $jscode = "document.documentElement.style.setProperty('--polizeinrw-template-color', '{$templatecolors['main']}');";
+        $jscode .= "document.documentElement.style.setProperty('--polizeinrw-template-secondary', '{$templatecolors['secondary']}');";
+        $jscode .= "document.documentElement.style.setProperty('--polizeinrw-template-notice', '{$templatecolors['notice']}');";
+        $jscode .= "document.documentElement.style.setProperty('--polizeinrw-template-notice-text', '{$templatecolors['notice_text']}');";
+        $jscode .= "document.documentElement.style.setProperty('--polizeinrw-template-text', '{$templatecolors['text']}');";
+        $jscode .= "document.documentElement.style.setProperty('--polizeinrw-template-activity-icon', '{$templatecolors['activity_icon']}');";
+        $jscode .= "document.documentElement.style.setProperty('--polizeinrw-template-activity-icon-bg', '{$templatecolors['activity_icon_bg']}');";
         $PAGE->requires->js_init_code($jscode, true);
     }
 
@@ -164,6 +170,17 @@ class format_polizeinrw extends core_courseformat\base {
 
         static $courseformatoptions = false;
         if ($courseformatoptions === false) {
+            // Standard-Farbwerte für benutzerdefiniertes Template.
+            $defaultcustomcolors = [
+                'main' => '#004B87',
+                'secondary' => '#0056A3',
+                'notice' => '#FFD700',
+                'notice_text' => '#000000',
+                'text' => '#FFFFFF',
+                'activity_icon' => '#004B87',
+                'activity_icon_bg' => '#E6F0F7',
+            ];
+
             $courseformatoptions = [
                 'courseindex' => [
                     'default' => 1,
@@ -172,6 +189,39 @@ class format_polizeinrw extends core_courseformat\base {
                 'templatecolor' => [
                     'default' => 1,
                     'type' => PARAM_INT,
+                ],
+                // Benutzerdefinierte Template-Optionen (immer definiert, damit sie gespeichert werden können).
+                'customtemplate' => [
+                    'default' => 0,
+                    'type' => PARAM_INT,
+                ],
+                'customtemplate_main' => [
+                    'default' => $defaultcustomcolors['main'],
+                    'type' => PARAM_TEXT,
+                ],
+                'customtemplate_secondary' => [
+                    'default' => $defaultcustomcolors['secondary'],
+                    'type' => PARAM_TEXT,
+                ],
+                'customtemplate_notice' => [
+                    'default' => $defaultcustomcolors['notice'],
+                    'type' => PARAM_TEXT,
+                ],
+                'customtemplate_notice_text' => [
+                    'default' => $defaultcustomcolors['notice_text'],
+                    'type' => PARAM_TEXT,
+                ],
+                'customtemplate_text' => [
+                    'default' => $defaultcustomcolors['text'],
+                    'type' => PARAM_TEXT,
+                ],
+                'customtemplate_activity_icon' => [
+                    'default' => $defaultcustomcolors['activity_icon'],
+                    'type' => PARAM_TEXT,
+                ],
+                'customtemplate_activity_icon_bg' => [
+                    'default' => $defaultcustomcolors['activity_icon_bg'],
+                    'type' => PARAM_TEXT,
                 ],
             ];
         }
@@ -205,9 +255,188 @@ class format_polizeinrw extends core_courseformat\base {
                     ],
                 ],
             ];
+
+            // Prüfe, ob der Benutzer die Capability hat, eigene Templates zu erstellen.
+            $course = $this->get_course();
+            $canmanagetemplates = false;
+            if ($course->id) {
+                // Kurs existiert bereits - prüfe im Kurskontext.
+                $coursecontext = \context_course::instance($course->id);
+                $canmanagetemplates = has_capability('format/polizeinrw:managetemplates', $coursecontext);
+            } else if (isset($course->category) && $course->category) {
+                // Kurs existiert noch nicht - prüfe im Kategoriekontext.
+                $categorycontext = \context_coursecat::instance($course->category);
+                $canmanagetemplates = has_capability('format/polizeinrw:managetemplates', $categorycontext);
+            } else {
+                // Fallback: Systemkontext.
+                $systemcontext = \context_system::instance();
+                $canmanagetemplates = has_capability('format/polizeinrw:managetemplates', $systemcontext);
+            }
+
+            // Wenn der Benutzer die Capability hat, füge Formularfelder für benutzerdefiniertes Template hinzu.
+            if ($canmanagetemplates) {
+                $courseformatoptionsedit['customtemplate'] = [
+                    'label' => new \lang_string('customtemplate', 'format_polizeinrw'),
+                    'help' => 'customtemplate',
+                    'help_component' => 'format_polizeinrw',
+                    'element_type' => 'advcheckbox',
+                    'element_attributes' => [get_string('yes')],
+                ];
+
+                $courseformatoptionsedit['customtemplate_main'] = [
+                    'label' => new \lang_string('customtemplate_main_color', 'format_polizeinrw'),
+                    'help' => 'customtemplate_main_color',
+                    'help_component' => 'format_polizeinrw',
+                    'element_type' => 'text',
+                    'element_attributes' => [
+                        ['size' => 7, 'maxlength' => 7],
+                    ],
+                ];
+
+                $courseformatoptionsedit['customtemplate_secondary'] = [
+                    'label' => new \lang_string('customtemplate_secondary_color', 'format_polizeinrw'),
+                    'help' => 'customtemplate_secondary_color',
+                    'help_component' => 'format_polizeinrw',
+                    'element_type' => 'text',
+                    'element_attributes' => [
+                        ['size' => 7, 'maxlength' => 7],
+                    ],
+                ];
+
+                $courseformatoptionsedit['customtemplate_notice'] = [
+                    'label' => new \lang_string('customtemplate_notice_color', 'format_polizeinrw'),
+                    'help' => 'customtemplate_notice_color',
+                    'help_component' => 'format_polizeinrw',
+                    'element_type' => 'text',
+                    'element_attributes' => [
+                        ['size' => 7, 'maxlength' => 7],
+                    ],
+                ];
+
+                $courseformatoptionsedit['customtemplate_notice_text'] = [
+                    'label' => new \lang_string('customtemplate_notice_text_color', 'format_polizeinrw'),
+                    'help' => 'customtemplate_notice_text_color',
+                    'help_component' => 'format_polizeinrw',
+                    'element_type' => 'text',
+                    'element_attributes' => [
+                        ['size' => 7, 'maxlength' => 7],
+                    ],
+                ];
+
+                $courseformatoptionsedit['customtemplate_text'] = [
+                    'label' => new \lang_string('customtemplate_text_color', 'format_polizeinrw'),
+                    'help' => 'customtemplate_text_color',
+                    'help_component' => 'format_polizeinrw',
+                    'element_type' => 'text',
+                    'element_attributes' => [
+                        ['size' => 7, 'maxlength' => 7],
+                    ],
+                ];
+
+                $courseformatoptionsedit['customtemplate_activity_icon'] = [
+                    'label' => new \lang_string('customtemplate_activity_icon_color', 'format_polizeinrw'),
+                    'help' => 'customtemplate_activity_icon_color',
+                    'help_component' => 'format_polizeinrw',
+                    'element_type' => 'text',
+                    'element_attributes' => [
+                        ['size' => 7, 'maxlength' => 7],
+                    ],
+                ];
+
+                $courseformatoptionsedit['customtemplate_activity_icon_bg'] = [
+                    'label' => new \lang_string('customtemplate_activity_icon_bg_color', 'format_polizeinrw'),
+                    'help' => 'customtemplate_activity_icon_bg_color',
+                    'help_component' => 'format_polizeinrw',
+                    'element_type' => 'text',
+                    'element_attributes' => [
+                        ['size' => 7, 'maxlength' => 7],
+                    ],
+                ];
+            }
+
             $courseformatoptions = array_merge_recursive($courseformatoptions, $courseformatoptionsedit);
         }
         return $courseformatoptions;
+    }
+
+    /**
+     * Adds format options elements to the course/section edit form.
+     *
+     * Override to filter out custom template options if user doesn't have capability.
+     *
+     * @param MoodleQuickForm $mform form the elements are added to.
+     * @param bool $forsection 'true' if this is a section edit form, 'false' if this is course edit form.
+     * @return array array of references to the added form elements.
+     */
+    public function create_edit_form_elements(&$mform, $forsection = false) {
+        if (!$forsection) {
+            // Prüfe, ob der Benutzer die Capability hat, eigene Templates zu erstellen.
+            $course = $this->get_course();
+            $canmanagetemplates = false;
+            if ($course->id) {
+                $coursecontext = \context_course::instance($course->id);
+                $canmanagetemplates = has_capability('format/polizeinrw:managetemplates', $coursecontext);
+            } else if (isset($course->category) && $course->category) {
+                $categorycontext = \context_coursecat::instance($course->category);
+                $canmanagetemplates = has_capability('format/polizeinrw:managetemplates', $categorycontext);
+            } else {
+                $systemcontext = \context_system::instance();
+                $canmanagetemplates = has_capability('format/polizeinrw:managetemplates', $systemcontext);
+            }
+
+            // Wenn der Benutzer keine Capability hat, entferne die benutzerdefinierten Template-Optionen.
+            if (!$canmanagetemplates) {
+                // Hole die Optionen und entferne die benutzerdefinierten Template-Optionen.
+                $options = $this->course_format_options(true);
+                $customtemplateoptions = [
+                    'customtemplate',
+                    'customtemplate_main',
+                    'customtemplate_secondary',
+                    'customtemplate_notice',
+                    'customtemplate_notice_text',
+                    'customtemplate_text',
+                    'customtemplate_activity_icon',
+                    'customtemplate_activity_icon_bg',
+                ];
+                foreach ($customtemplateoptions as $optionname) {
+                    if (isset($options[$optionname])) {
+                        unset($options[$optionname]);
+                    }
+                }
+                // Erstelle Formularelemente nur für die verbleibenden Optionen.
+                $elements = [];
+                foreach ($options as $optionname => $option) {
+                    // Überspringe Optionen ohne Label (werden nicht im Formular angezeigt).
+                    if (!isset($option['label'])) {
+                        continue;
+                    }
+                    if (!isset($option['element_type'])) {
+                        $option['element_type'] = 'text';
+                    }
+                    $args = [$option['element_type'], $optionname, $option['label']];
+                    if (!empty($option['element_attributes'])) {
+                        $args = array_merge($args, $option['element_attributes']);
+                    }
+                    $elements[] = call_user_func_array([$mform, 'addElement'], $args);
+                    if (isset($option['help'])) {
+                        $helpcomponent = 'format_' . $this->get_format();
+                        if (isset($option['help_component'])) {
+                            $helpcomponent = $option['help_component'];
+                        }
+                        $mform->addHelpButton($optionname, $option['help'], $helpcomponent);
+                    }
+                    if (isset($option['type'])) {
+                        $mform->setType($optionname, $option['type']);
+                    }
+                    if (isset($option['default']) && !array_key_exists($optionname, $mform->_defaultValues)) {
+                        $mform->setDefault($optionname, $option['default']);
+                    }
+                }
+                return $elements;
+            }
+        }
+        // Wenn Capability vorhanden ist oder es sich um eine Section handelt, verwende die Standard-Implementierung.
+        return parent::create_edit_form_elements($mform, $forsection);
     }
 
     /**
@@ -216,24 +445,54 @@ class format_polizeinrw extends core_courseformat\base {
     protected function load_colorpicker_js() {
         global $PAGE;
 
-        // Build color data for JavaScript.
+        // Build color data for JavaScript (using main color for preview).
+        // Only include enabled templates.
         $colors = [];
+        $defaultcolors = [
+            1 => '#004B87',
+            2 => '#FFD700',
+            3 => '#28A745',
+            4 => '#DC3545',
+            5 => '#6C757D',
+        ];
+        
         for ($i = 1; $i <= 5; $i++) {
-            $color = get_config('format_polizeinrw', 'templatecolor' . $i);
-            if (empty($color)) {
-                $defaultcolors = [
-                    1 => '#004B87',
-                    2 => '#FFD700',
-                    3 => '#28A745',
-                    4 => '#DC3545',
-                    5 => '#6C757D',
-                ];
-                $color = $defaultcolors[$i];
+            // Check if template is enabled.
+            $enabled = get_config('format_polizeinrw', 'template' . $i . '_enabled');
+            // Checkbox returns '0' (string) when unchecked, '1' (string) when checked, or false if not set.
+            // For backward compatibility, treat false as enabled (1).
+            if ($enabled === false) {
+                $enabled = 1; // Default: enabled if not set.
+            } else {
+                // Convert to integer: '0' becomes 0, '1' becomes 1.
+                // Note: empty('0') is true in PHP, so we must check explicitly.
+                $enabled = (int)$enabled;
             }
+            
+            // Only include enabled templates (enabled == 1).
+            if ($enabled != 1) {
+                continue;
+            }
+            
+            // Get main color (template's primary color).
+            $maincolor = get_config('format_polizeinrw', 'template' . $i . '_main');
+            if (empty($maincolor)) {
+                $maincolor = $defaultcolors[$i];
+            }
+            
             $colors[] = [
                 'index' => $i,
-                'color' => $color,
-                'label' => get_string('templatecolor', 'format_polizeinrw', $i),
+                'color' => $maincolor,
+                'label' => get_string('template', 'format_polizeinrw', $i),
+            ];
+        }
+
+        // If no templates are enabled, provide a default color option.
+        if (empty($colors)) {
+            $colors[] = [
+                'index' => 1,
+                'color' => $defaultcolors[1], // Default: Polizei Blau
+                'label' => get_string('templatecolor_option', 'format_polizeinrw', ['num' => 1]),
             ];
         }
 
@@ -244,35 +503,74 @@ class format_polizeinrw extends core_courseformat\base {
     /**
      * Get the template color options for the course settings dropdown.
      *
-     * @return array Array of color options with index => label
+     * @return array Array of color options with index => label (only enabled templates)
      */
     protected function get_template_color_options() {
         $options = [];
         for ($i = 1; $i <= 5; $i++) {
-            $color = get_config('format_polizeinrw', 'templatecolor' . $i);
-            if (empty($color)) {
-                // Default colors if not set.
-                $defaultcolors = [
-                    1 => '#004B87',
-                    2 => '#FFD700',
-                    3 => '#28A745',
-                    4 => '#DC3545',
-                    5 => '#6C757D',
-                ];
-                $color = $defaultcolors[$i];
+            // Check if template is enabled.
+            $enabled = get_config('format_polizeinrw', 'template' . $i . '_enabled');
+            // Checkbox returns '0' (string) when unchecked, '1' (string) when checked, or false if not set.
+            // For backward compatibility, treat false as enabled (1).
+            if ($enabled === false) {
+                $enabled = 1; // Default: enabled if not set.
+            } else {
+                // Convert to integer: '0' becomes 0, '1' becomes 1.
+                // Note: empty('0') is true in PHP, so we must check explicitly.
+                $enabled = (int)$enabled;
             }
-            $options[$i] = get_string('templatecolor_option', 'format_polizeinrw', ['num' => $i, 'color' => $color]);
+            
+            // Only include enabled templates (enabled == 1).
+            if ($enabled == 1) {
+                $options[$i] = get_string('templatecolor_option', 'format_polizeinrw', ['num' => $i]);
+            }
         }
+        
+        // Fallback: If no templates are enabled, enable template 1 by default.
+        if (empty($options)) {
+            $options[1] = get_string('templatecolor_option', 'format_polizeinrw', ['num' => 1]);
+        }
+        
         return $options;
     }
 
     /**
-     * Get the selected template color for this course.
+     * Get the selected template color for this course (backward compatibility).
      *
-     * @return string The hex color code
+     * @return string The hex color code of the main color
      */
     public function get_course_template_color() {
+        $colors = $this->get_course_template_colors();
+        return $colors['main'];
+    }
+
+    /**
+     * Get all template colors for this course.
+     *
+     * @return array Array with keys 'main', 'secondary', 'notice', 'notice_text', 'text', 'activity_icon', 'activity_icon_bg'
+     */
+    public function get_course_template_colors() {
         $course = $this->get_course();
+        
+        // Prüfe, ob ein benutzerdefiniertes Template aktiviert ist.
+        $formatoptions = $this->get_format_options();
+        if (!empty($formatoptions['customtemplate'])) {
+            // Benutzerdefiniertes Template ist aktiviert - verwende die benutzerdefinierten Farben.
+            $colors = [];
+            $types = ['main', 'secondary', 'notice', 'notice_text', 'text', 'activity_icon', 'activity_icon_bg'];
+            foreach ($types as $type) {
+                $key = 'customtemplate_' . $type;
+                if (isset($formatoptions[$key]) && !empty($formatoptions[$key])) {
+                    $colors[$type] = $formatoptions[$key];
+                } else {
+                    // Fallback auf Standard-Farben, falls nicht gesetzt.
+                    $colors[$type] = $this->get_default_custom_template_color($type);
+                }
+            }
+            return $colors;
+        }
+        
+        // Verwende das ausgewählte Standard-Template.
         $colorindex = isset($course->templatecolor) ? (int)$course->templatecolor : 1;
 
         // Ensure valid index.
@@ -280,20 +578,112 @@ class format_polizeinrw extends core_courseformat\base {
             $colorindex = 1;
         }
 
-        $color = get_config('format_polizeinrw', 'templatecolor' . $colorindex);
-        if (empty($color)) {
-            // Default colors if not set.
-            $defaultcolors = [
-                1 => '#004B87',
-                2 => '#FFD700',
-                3 => '#28A745',
-                4 => '#DC3545',
-                5 => '#6C757D',
-            ];
-            $color = $defaultcolors[$colorindex];
+        // Default colors for each template.
+        $defaultcolors = [
+            1 => [
+                'main' => '#004B87',
+                'secondary' => '#0056A3',
+                'notice' => '#FFD700',
+                'notice_text' => '#000000',
+                'text' => '#FFFFFF',
+                'activity_icon' => '#004B87',
+                'activity_icon_bg' => '#E6F0F7',
+            ],
+            2 => [
+                'main' => '#FFD700',
+                'secondary' => '#FFE44D',
+                'notice' => '#DC3545',
+                'notice_text' => '#FFFFFF',
+                'text' => '#000000',
+                'activity_icon' => '#000000',
+                'activity_icon_bg' => '#FFF9E6',
+            ],
+            3 => [
+                'main' => '#28A745',
+                'secondary' => '#5CB85C',
+                'notice' => '#FFC107',
+                'notice_text' => '#000000',
+                'text' => '#FFFFFF',
+                'activity_icon' => '#28A745',
+                'activity_icon_bg' => '#E8F5E9',
+            ],
+            4 => [
+                'main' => '#DC3545',
+                'secondary' => '#E85D75',
+                'notice' => '#FFD700',
+                'notice_text' => '#000000',
+                'text' => '#FFFFFF',
+                'activity_icon' => '#DC3545',
+                'activity_icon_bg' => '#FCE8E8',
+            ],
+            5 => [
+                'main' => '#6C757D',
+                'secondary' => '#868E96',
+                'notice' => '#FFD700',
+                'notice_text' => '#000000',
+                'text' => '#FFFFFF',
+                'activity_icon' => '#6C757D',
+                'activity_icon_bg' => '#F5F5F5',
+            ],
+        ];
+
+        // Get colors from config or use defaults.
+        $colors = [];
+        $colors['main'] = get_config('format_polizeinrw', 'template' . $colorindex . '_main');
+        if (empty($colors['main'])) {
+            $colors['main'] = $defaultcolors[$colorindex]['main'];
         }
 
-        return $color;
+        $colors['secondary'] = get_config('format_polizeinrw', 'template' . $colorindex . '_secondary');
+        if (empty($colors['secondary'])) {
+            $colors['secondary'] = $defaultcolors[$colorindex]['secondary'];
+        }
+
+        $colors['notice'] = get_config('format_polizeinrw', 'template' . $colorindex . '_notice');
+        if (empty($colors['notice'])) {
+            $colors['notice'] = $defaultcolors[$colorindex]['notice'];
+        }
+
+        $colors['notice_text'] = get_config('format_polizeinrw', 'template' . $colorindex . '_notice_text');
+        if (empty($colors['notice_text'])) {
+            $colors['notice_text'] = $defaultcolors[$colorindex]['notice_text'];
+        }
+
+        $colors['text'] = get_config('format_polizeinrw', 'template' . $colorindex . '_text');
+        if (empty($colors['text'])) {
+            $colors['text'] = $defaultcolors[$colorindex]['text'];
+        }
+
+        $colors['activity_icon'] = get_config('format_polizeinrw', 'template' . $colorindex . '_activity_icon');
+        if (empty($colors['activity_icon'])) {
+            $colors['activity_icon'] = $defaultcolors[$colorindex]['activity_icon'];
+        }
+
+        $colors['activity_icon_bg'] = get_config('format_polizeinrw', 'template' . $colorindex . '_activity_icon_bg');
+        if (empty($colors['activity_icon_bg'])) {
+            $colors['activity_icon_bg'] = $defaultcolors[$colorindex]['activity_icon_bg'];
+        }
+
+        return $colors;
+    }
+
+    /**
+     * Get default color for a custom template color type.
+     *
+     * @param string $type Color type (main, secondary, notice, etc.)
+     * @return string Default color value
+     */
+    protected function get_default_custom_template_color($type) {
+        $defaults = [
+            'main' => '#004B87',
+            'secondary' => '#0056A3',
+            'notice' => '#FFD700',
+            'notice_text' => '#000000',
+            'text' => '#FFFFFF',
+            'activity_icon' => '#004B87',
+            'activity_icon_bg' => '#E6F0F7',
+        ];
+        return isset($defaults[$type]) ? $defaults[$type] : '#000000';
     }
 
 }

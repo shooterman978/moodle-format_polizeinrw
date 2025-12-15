@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Capability definitions for the format_polizeinrw plugin.
  *
  * @package     format_polizeinrw
  * @copyright   2025 Jonas Rehkopp <jonas.rehkopp@polizei.nrw.de>
@@ -24,8 +24,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'format_polizeinrw';
-$plugin->release = '0.1.0';
-$plugin->version = 2025120900;
-$plugin->requires = 2022112800;
-$plugin->maturity = MATURITY_ALPHA;
+$capabilities = [
+    'format/polizeinrw:managetemplates' => [
+        'riskbitmask' => RISK_CONFIG,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+];
+

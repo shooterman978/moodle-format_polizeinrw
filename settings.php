@@ -26,33 +26,142 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-    $settings = new admin_settingpage('format_polizeinrw_settings', new lang_string('pluginname', 'format_polizeinrw'));
+    // Create main settings page with tabs using Moodle's standard tab implementation.
+    $settings = new theme_boost_admin_settingspage_tabs(
+        'format_polizeinrw_settings',
+        new lang_string('pluginname', 'format_polizeinrw')
+    );
 
     if ($ADMIN->fulltree) {
-        // Heading for template colors.
-        $settings->add(new admin_setting_heading(
-            'format_polizeinrw/templatecolors_heading',
-            new lang_string('templatecolors_heading', 'format_polizeinrw'),
-            new lang_string('templatecolors_heading_desc', 'format_polizeinrw')
-        ));
-
-        // Default colors for the 5 template colors.
+        // Default colors for the 5 templates.
+        // Each template has: main color, secondary color, notice color, notice text color, text color, activity icon color, activity icon background color.
         $defaultcolors = [
-            1 => '#004B87',  // Polizei Blau
-            2 => '#FFD700',  // Gelb/Gold
-            3 => '#28A745',  // Grün
-            4 => '#DC3545',  // Rot
-            5 => '#6C757D',  // Grau
+            1 => [
+                'main' => '#004B87',      // Polizei Blau
+                'secondary' => '#0056A3',  // Hellblau
+                'notice' => '#FFD700',     // Gelb/Gold
+                'notice_text' => '#000000', // Schwarz
+                'text' => '#FFFFFF',       // Weiß
+                'activity_icon' => '#004B87', // Aktivitäts-Icon Farbe
+                'activity_icon_bg' => '#E6F0F7', // Aktivitäts-Icon Hintergrundfarbe
+            ],
+            2 => [
+                'main' => '#FFD700',       // Gelb/Gold
+                'secondary' => '#FFE44D',   // Hellgelb
+                'notice' => '#DC3545',      // Rot
+                'notice_text' => '#FFFFFF', // Weiß
+                'text' => '#000000',        // Schwarz
+                'activity_icon' => '#000000', // Aktivitäts-Icon Farbe
+                'activity_icon_bg' => '#FFF9E6', // Aktivitäts-Icon Hintergrundfarbe
+            ],
+            3 => [
+                'main' => '#28A745',       // Grün
+                'secondary' => '#5CB85C',  // Hellgrün
+                'notice' => '#FFC107',      // Orange
+                'notice_text' => '#000000', // Schwarz
+                'text' => '#FFFFFF',        // Weiß
+                'activity_icon' => '#28A745', // Aktivitäts-Icon Farbe
+                'activity_icon_bg' => '#E8F5E9', // Aktivitäts-Icon Hintergrundfarbe
+            ],
+            4 => [
+                'main' => '#DC3545',       // Rot
+                'secondary' => '#E85D75',  // Hellrot
+                'notice' => '#FFD700',      // Gelb/Gold
+                'notice_text' => '#000000', // Schwarz
+                'text' => '#FFFFFF',        // Weiß
+                'activity_icon' => '#DC3545', // Aktivitäts-Icon Farbe
+                'activity_icon_bg' => '#FCE8E8', // Aktivitäts-Icon Hintergrundfarbe
+            ],
+            5 => [
+                'main' => '#6C757D',       // Grau
+                'secondary' => '#868E96',  // Hellgrau
+                'notice' => '#FFD700',     // Gelb/Gold
+                'notice_text' => '#000000', // Schwarz
+                'text' => '#FFFFFF',        // Weiß
+                'activity_icon' => '#6C757D', // Aktivitäts-Icon Farbe
+                'activity_icon_bg' => '#F5F5F5', // Aktivitäts-Icon Hintergrundfarbe
+            ],
         ];
 
-        // Create 5 color pickers.
+        // Create 5 tabs, one for each template.
         for ($i = 1; $i <= 5; $i++) {
-            $settings->add(new admin_setting_configcolourpicker(
-                'format_polizeinrw/templatecolor' . $i,
-                new lang_string('templatecolor', 'format_polizeinrw', $i),
-                new lang_string('templatecolor_desc', 'format_polizeinrw', $i),
-                $defaultcolors[$i]
+            $tab = new admin_settingpage(
+                'template' . $i,
+                new lang_string('template', 'format_polizeinrw', $i)
+            );
+
+            // Heading for this template.
+            $tab->add(new admin_setting_heading(
+                'format_polizeinrw/template' . $i . '_heading',
+                new lang_string('template', 'format_polizeinrw', $i),
+                new lang_string('template_desc', 'format_polizeinrw', $i)
             ));
+
+            // Template aktivieren (Enable Template).
+            $tab->add(new admin_setting_configcheckbox(
+                'format_polizeinrw/template' . $i . '_enabled',
+                new lang_string('template_enabled', 'format_polizeinrw', $i),
+                new lang_string('template_enabled_desc', 'format_polizeinrw', $i),
+                1  // Default: enabled
+            ));
+
+            // Template-Hauptfarbe (Main Color).
+            $tab->add(new admin_setting_configcolourpicker(
+                'format_polizeinrw/template' . $i . '_main',
+                new lang_string('template_main_color', 'format_polizeinrw', $i),
+                new lang_string('template_main_color_desc', 'format_polizeinrw', $i),
+                $defaultcolors[$i]['main']
+            ));
+
+            // Template-Zweitfarbe (Secondary Color).
+            $tab->add(new admin_setting_configcolourpicker(
+                'format_polizeinrw/template' . $i . '_secondary',
+                new lang_string('template_secondary_color', 'format_polizeinrw', $i),
+                new lang_string('template_secondary_color_desc', 'format_polizeinrw', $i),
+                $defaultcolors[$i]['secondary']
+            ));
+
+            // Template-Hinweisfarbe (Notice Color).
+            $tab->add(new admin_setting_configcolourpicker(
+                'format_polizeinrw/template' . $i . '_notice',
+                new lang_string('template_notice_color', 'format_polizeinrw', $i),
+                new lang_string('template_notice_color_desc', 'format_polizeinrw', $i),
+                $defaultcolors[$i]['notice']
+            ));
+
+            // Template-Hinweisschriftfarbe (Notice Text Color).
+            $tab->add(new admin_setting_configcolourpicker(
+                'format_polizeinrw/template' . $i . '_notice_text',
+                new lang_string('template_notice_text_color', 'format_polizeinrw', $i),
+                new lang_string('template_notice_text_color_desc', 'format_polizeinrw', $i),
+                $defaultcolors[$i]['notice_text']
+            ));
+
+            // Template-Schriftfarbe (Text Color).
+            $tab->add(new admin_setting_configcolourpicker(
+                'format_polizeinrw/template' . $i . '_text',
+                new lang_string('template_text_color', 'format_polizeinrw', $i),
+                new lang_string('template_text_color_desc', 'format_polizeinrw', $i),
+                $defaultcolors[$i]['text']
+            ));
+
+            // Template-Aktivitätsiconfarbe (Activity Icon Color).
+            $tab->add(new admin_setting_configcolourpicker(
+                'format_polizeinrw/template' . $i . '_activity_icon',
+                new lang_string('template_activity_icon_color', 'format_polizeinrw', $i),
+                new lang_string('template_activity_icon_color_desc', 'format_polizeinrw', $i),
+                $defaultcolors[$i]['activity_icon']
+            ));
+
+            // Template-Aktivitätsiconhintergrundfarbe (Activity Icon Background Color).
+            $tab->add(new admin_setting_configcolourpicker(
+                'format_polizeinrw/template' . $i . '_activity_icon_bg',
+                new lang_string('template_activity_icon_bg_color', 'format_polizeinrw', $i),
+                new lang_string('template_activity_icon_bg_color_desc', 'format_polizeinrw', $i),
+                $defaultcolors[$i]['activity_icon_bg']
+            ));
+
+            $settings->add_tab($tab);
         }
     }
 }

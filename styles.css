@@ -6,24 +6,30 @@
    CSS Custom Properties (Design Tokens)
    ============================================ */
 :root {
-    /* Template-Farbe (wird per JavaScript aus den Kurseinstellungen gesetzt) */
-    /* Fallback: Polizei Blau */
-    --polizeinrw-template-color: #004B87;
-    
+    /* Template-Farben (werden per JavaScript aus den Kurseinstellungen gesetzt) */
+    /* Fallback: Polizei Blau Template */
+    --polizeinrw-template-color: #1a2e56;
+    --polizeinrw-template-secondary: #475777;
+    --polizeinrw-template-notice: #e8e227;
+    --polizeinrw-template-notice-text: #1a2e56;
+    --polizeinrw-template-text: #fff;
+    --polizeinrw-template-activity-icon: #1a2e56;
+    --polizeinrw-template-activity-icon-bg: #fff;
+
     /* Polizei NRW Farben */
     --polizeinrw-primary: #2d1b4e;
     --polizeinrw-primary-light: #3d2b5e;
-    /* Akzentfarbe verwendet jetzt die Template-Farbe */
+    /* Akzentfarbe verwendet jetzt die Template-Hauptfarbe */
     --polizeinrw-accent: var(--polizeinrw-template-color);
     --polizeinrw-completion-yellow: #f7e135;
     --polizeinrw-completion-check: #2d1b4e;
-    --polizeinrw-card-bg: #ffffff;
+    --polizeinrw-card-bg: #fff;
     --polizeinrw-card-shadow: rgba(0, 0, 0, 0.1);
     --polizeinrw-card-hover-shadow: rgba(0, 0, 0, 0.15);
-    --polizeinrw-text-dark: #333333;
-    --polizeinrw-text-light: #ffffff;
+    --polizeinrw-text-dark: #333;
+    --polizeinrw-text-light: #fff;
     --polizeinrw-hidden-opacity: 0.6;
-    
+
     /* Card Dimensionen */
     --polizeinrw-card-width: 180px;
     --polizeinrw-card-height: 160px;
@@ -49,7 +55,7 @@
     display: flex;
     align-items: stretch;
     background-color: #f5f5f5;
-    border-radius: 0px;
+    border-radius: 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     /* overflow: hidden entfernt, damit Dropdown-Menüs nicht abgeschnitten werden */
     overflow: visible;
@@ -61,8 +67,8 @@
 
 /* Minimale Höhe für eingeklappte Sections (nur Header sichtbar) */
 .format-polizeinrw-section:has(.content.collapse:not(.show)) .polizeinrw-section-content {
-    min-height: 65px !important;
-    height: 65px !important;
+    min-height: 65px;
+    height: 65px;
 }
 
 /* Fallback: Minimale Höhe für alle Sections (wird für eingeklappte überschrieben) */
@@ -73,8 +79,8 @@
 /* Linker Rand (farbiger Balken) INNERHALB der Section */
 .polizeinrw-section-bar {
     flex-shrink: 0;
-    width: 65px!important;
-    background-color: var(--polizeinrw-template-color);
+    width: 65px;
+    background-color: var(--polizeinrw-template-secondary);
     overflow: hidden;
     /* Keine border-radius, da er am linken Rand der Section ist */
     display: flex;
@@ -102,22 +108,50 @@
     /* overflow: visible, damit Dropdown-Menüs sichtbar sind */
     overflow: visible;
     position: relative;
+    background-color: var(--polizeinrw-template-color);
+    color: var(--polizeinrw-template-text);
+}
+
+/* Links im Section-Inner verwenden die Template-Schriftfarbe */
+.polizeinrw-section-inner a,
+.polizeinrw-section-inner .activity a,
+.polizeinrw-section-inner .activityname a,
+.polizeinrw-section-inner .activity-link,
+.polizeinrw-section-inner .activitytitle a,
+.polizeinrw-section-inner .activityinstance a {
+    color: var(--polizeinrw-template-text)!important;
+}
+
+.polizeinrw-section-inner a:hover,
+.polizeinrw-section-inner a:focus,
+.polizeinrw-section-inner .activity a:hover,
+.polizeinrw-section-inner .activity a:focus,
+.polizeinrw-section-inner .activityname a:hover,
+.polizeinrw-section-inner .activityname a:focus,
+.polizeinrw-section-inner .activity-link:hover,
+.polizeinrw-section-inner .activity-link:focus,
+.polizeinrw-section-inner .activitytitle a:hover,
+.polizeinrw-section-inner .activitytitle a:focus,
+.polizeinrw-section-inner .activityinstance a:hover,
+.polizeinrw-section-inner .activityinstance a:focus {
+    color: var(--polizeinrw-template-text);
+    text-decoration: underline;
 }
 
 /* Reduziertes Padding für eingeklappte Sections (nur Header sichtbar) */
 /* Wenn der Content-Bereich eingeklappt ist, reduziere das Padding des inneren Containers */
 .format-polizeinrw-section:has(.content.collapse:not(.show)) .polizeinrw-section-inner {
-    padding-top: 8px !important;
-    padding-bottom: 8px !important;
+    padding-top: 8px;
+    padding-bottom: 8px;
 }
 
 /* Zusätzlich: Reduziere auch die Höhe des Headers für eingeklappte Sections */
 .format-polizeinrw-section:has(.content.collapse:not(.show)) .course-section-header {
     min-height: auto;
-    padding-left: 0px!important;
-    padding-right: 0px!important;
-    padding-top: 9px!important;
-    padding-bottom: 9px!important;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 9px;
+    padding-bottom: 9px;
 }
 
 /* Header-Bereich der Section - muss overflow: visible haben für Dropdowns */
@@ -131,13 +165,28 @@
     min-height: 36px;
 }
 
-/* Minimale Höhe für eingeklappte Sections wird durch min-height: 76px 
+/* Toggle-Button (Einklappen/Ausklappen) - durchsichtiger Hintergrund */
+.polizeinrw-section-toggle,
+.polizeinrw-section-toggle.btn-icon,
+.polizeinrw-section-toggle .expanded-icon,
+.polizeinrw-section-toggle .collapsed-icon,
+.polizeinrw-section-toggle .expanded-icon.p-2,
+.polizeinrw-section-toggle .collapsed-icon.p-2 {
+    background-color: transparent!important;
+}
+
+.polizeinrw-section-toggle:hover,
+.polizeinrw-section-toggle.btn-icon:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Minimale Höhe für eingeklappte Sections wird durch min-height: 76px
    auf .polizeinrw-section-content gesteuert (siehe oben) */
 
 /* Collapse-Container - muss overflow: visible haben, damit Dropdowns sichtbar sind */
 .format-polizeinrw-section .content.collapse,
 .format-polizeinrw-section .course-content-item-content {
-    overflow: visible !important;
+    overflow: visible;
 }
 
 /* ============================================
@@ -187,7 +236,7 @@
     width: var(--polizeinrw-card-width);
     height: var(--polizeinrw-card-width);
     max-width: 100%;
-    background: var(--polizeinrw-card-bg);
+    background: var(--polizeinrw-template-activity-icon-bg);
     border-radius: var(--polizeinrw-card-radius);
     box-shadow: 0 4px 12px var(--polizeinrw-card-shadow);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -254,12 +303,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    /* Hintergrundfarbe entfernt - wird jetzt auf der gesamten Card gesetzt */
+    border-radius: 50%;
+    width: calc(var(--polizeinrw-icon-size) + 20px);
+    height: calc(var(--polizeinrw-icon-size) + 20px);
+    margin: 0 auto;
 }
 
 .polizeinrw-activity-icon {
     width: var(--polizeinrw-icon-size);
     height: var(--polizeinrw-icon-size);
     object-fit: contain;
+    /* Icon-Färbung: Zuerst auf Schwarz setzen, dann mit sepia und hue-rotate auf Template-Farbe */
+    filter: brightness(0) saturate(100%);
+    /* Die Icon-Farbe wird durch einen CSS-Filter gesetzt */
+    /* Da SVG-Icons als <img> eingebunden sind, können wir sie nicht direkt färben */
+    /* Stattdessen verwenden wir einen Filter, der die Farbe annähert */
+    /* Für eine präzise Farbanpassung müsste das Icon als inline SVG eingebunden werden */
 }
 
 /* ============================================
@@ -276,7 +336,7 @@
     /* Stellt sicher, dass Hover-Events funktionieren */
     pointer-events: auto;
 }
-.polizeinrw-completion-badge:hover {    
+.polizeinrw-completion-badge:hover {
     transform: translateY(-4px);
     /*box-shadow: 0 8px 24px var(--polizeinrw-card-hover-shadow);*/
 }
@@ -320,9 +380,9 @@
     cursor: default;
 }
 
-/* ==== ABGESCHLOSSEN - Gelber Kreis mit Häkchen ==== */
+/* ==== ABGESCHLOSSEN - Template-Hinweisfarbe Kreis mit Häkchen ==== */
 .polizeinrw-completion-circle.polizeinrw-complete {
-    background-color: var(--polizeinrw-completion-yellow);
+    background-color: var(--polizeinrw-template-notice);
 }
 
 .polizeinrw-completion-circle.polizeinrw-complete .polizeinrw-checkmark {
@@ -339,15 +399,15 @@
 
 /* ==== NICHT ABGESCHLOSSEN - Weißer Kreis mit grauem Häkchen ==== */
 .polizeinrw-completion-circle.polizeinrw-incomplete {
-    background-color: #ffffff;
-    border: 2px solid #cccccc;
+    background-color: #fff;
+    border: 2px solid #ccc;
 }
 
 /* Graues Häkchen für nicht abgeschlossene Aktivitäten */
 .polizeinrw-completion-circle.polizeinrw-incomplete .polizeinrw-checkmark {
     font-size: 18px;
     font-weight: 900;
-    color: #cccccc;
+    color: #ccc;
     line-height: 1;
     display: flex;
     align-items: center;
@@ -357,12 +417,13 @@
 
 /* ==== Hover-Effekte für interaktive Buttons ==== */
 .polizeinrw-completion-circle.polizeinrw-complete:hover:not(.polizeinrw-auto):not(.polizeinrw-readonly) {
-    background-color: #e5ca30;
+    background-color: var(--polizeinrw-template-notice);
+    opacity: 0.9;
 }
 
 .polizeinrw-completion-circle.polizeinrw-incomplete:hover:not(.polizeinrw-auto):not(.polizeinrw-readonly) {
     background-color: #f5f5f5;
-    border-color: #999999;
+    border-color: #999;
 }
 
 /* ==== Tooltip für Completion Status ==== */
@@ -373,8 +434,8 @@
     transform: translateX(-50%);
     margin-bottom: 8px;
     padding: 6px 12px;
-    background-color: #333333;
-    color: #ffffff;
+    background-color: #333;
+    color: #fff;
     font-size: 12px;
     font-weight: 500;
     white-space: nowrap;
@@ -398,7 +459,7 @@
     transform: translateX(-50%);
     border-width: 5px;
     border-style: solid;
-    border-color: #333333 transparent transparent transparent;
+    border-color: #333 transparent transparent transparent;
 }
 
 /* Tooltip bei Hover anzeigen */
@@ -453,10 +514,10 @@
 
 /* Completion Badge im Bearbeitungsmodus ausblenden */
 .editing .polizeinrw-completion-badge {
-    display: none !important;
+    display: none;
 }
 
-.polizeinrw-completion-badge:hover {    
+.polizeinrw-completion-badge:hover {
     transform: translateY(-4px);
     /*box-shadow: 0 8px 24px var(--polizeinrw-card-hover-shadow);*/
 }
@@ -510,6 +571,8 @@
     font-weight: 500;
     line-height: 1.3;
     display: -webkit-box;
+    /* Limit the title to 3 lines */
+    line-clamp: 3;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
@@ -546,15 +609,15 @@
 /* Position relativ zum Wrapper, genau wie das Badge */
 body.editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions,
 .editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions {
-    opacity: 1 !important;
+    opacity: 1;
     /* Position relativ zum Wrapper, genau wie das Badge - oben rechts auf der Card */
-    position: absolute !important;
-    top: -8px !important;
-    right: -8px !important;
-    bottom: auto !important;
-    left: auto !important;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    bottom: auto;
+    left: auto;
     /* Stelle sicher, dass es über der Card liegt */
-    z-index: 200 !important;
+    z-index: 200;
 }
 
 .polizeinrw-card-actions .dropdown-toggle {
@@ -565,6 +628,28 @@ body.editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions,
     /* WICHTIG: pointer-events aktivieren */
     pointer-events: auto;
     cursor: pointer;
+    /* Normale Schriftfarbe für Buttons (nicht Template-Schriftfarbe) */
+    color: var(--polizeinrw-text-dark);
+}
+
+/* Buttons und Icons in Card-Actions verwenden normale Farbe */
+.polizeinrw-card-actions .btn,
+.polizeinrw-card-actions .btn-icon,
+.polizeinrw-card-actions .dropdown-toggle,
+.polizeinrw-card-actions [id^="action-menu-toggle-"],
+.polizeinrw-card-actions a.btn,
+.polizeinrw-card-actions button {
+    color: var(--polizeinrw-text-dark) !important;
+}
+
+.polizeinrw-card-actions .btn:hover,
+.polizeinrw-card-actions .btn-icon:hover,
+.polizeinrw-card-actions .dropdown-toggle:hover,
+.polizeinrw-card-actions [id^="action-menu-toggle-"]:hover,
+.polizeinrw-card-actions a.btn:hover,
+.polizeinrw-card-actions button:hover {
+    color: var(--polizeinrw-accent);
+    background-color: rgba(255, 255, 255, 1);
 }
 
 /* Action Menu und alle Bearbeitungs-Icons müssen klickbar sein */
@@ -573,7 +658,7 @@ body.editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions,
 .polizeinrw-card-actions .dropdown-toggle,
 .polizeinrw-card-actions button,
 .polizeinrw-card-actions a {
-    pointer-events: auto !important;
+    pointer-events: auto;
     z-index: 201;
     position: relative;
 }
@@ -583,9 +668,26 @@ body.editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions,
 .polizeinrw-card-actions .dropdown-menu.show,
 .polizeinrw-card-actions [id^="action-menu-"] .dropdown-menu,
 .polizeinrw-card-actions [id^="action-menu-"] .dropdown-menu.show {
-    z-index: 10000 !important;
-    position: absolute !important;
-    overflow: visible !important;
+    z-index: 10000;
+    position: absolute;
+    overflow: visible;
+    /* Normale Schriftfarbe für Dropdown-Menüs (nicht Template-Schriftfarbe) */
+    color: var(--polizeinrw-text-dark);
+    background-color: #fff;
+}
+
+/* Links in Card-Actions Dropdown-Menüs */
+.polizeinrw-card-actions .dropdown-menu a,
+.polizeinrw-card-actions .dropdown-menu.show a,
+.polizeinrw-card-actions [id^="action-menu-"] .dropdown-menu a {
+    color: var(--polizeinrw-text-dark);
+}
+
+.polizeinrw-card-actions .dropdown-menu a:hover,
+.polizeinrw-card-actions .dropdown-menu.show a:hover,
+.polizeinrw-card-actions [id^="action-menu-"] .dropdown-menu a:hover {
+    color: var(--polizeinrw-accent);
+    background-color: #f8f9fa;
 }
 
 /* ============================================
@@ -669,9 +771,10 @@ body.editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions,
 
 .polizeinrw-activity-grid .activity-item:not(.polizeinrw-activity-card-wrapper) {
     width: 100%;
-    background: #f8f9fa;
+    background: transparent;
+    border: none;
     border-radius: 8px;
-    padding: 16px;
+    padding: 16px 0;
     margin: 8px 0;
 }
 
@@ -717,7 +820,7 @@ body.editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions,
 .editing .polizeinrw-bulk-select,
 .editing .polizeinrw-visibility-badge,
 .editing .polizeinrw-completion-badge {
-    pointer-events: auto !important;
+    pointer-events: auto;
     z-index: 200;
     position: relative;
 }
@@ -726,7 +829,7 @@ body.editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions,
 .editing .polizeinrw-card-title .inplaceeditable,
 .editing .polizeinrw-card-title .inplaceeditable a,
 .editing .polizeinrw-card-title a {
-    pointer-events: auto !important;
+    pointer-events: auto;
     z-index: 200;
     position: relative;
 }
@@ -735,10 +838,29 @@ body.editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions,
 /* Sehr hoher z-index, damit Dropdowns über allen Sections liegen */
 .format-polizeinrw-section .dropdown-menu,
 .format-polizeinrw-section .dropdown-menu.show {
-    z-index: 9999 !important;
-    position: absolute !important;
+    z-index: 9999;
+    position: absolute;
     /* Stelle sicher, dass Dropdowns nicht abgeschnitten werden */
-    overflow: visible !important;
+    overflow: visible;
+    /* Normale Schriftfarbe für Dropdown-Menüs (nicht Template-Schriftfarbe) */
+    color: var(--polizeinrw-text-dark);
+    background-color: #fff;
+}
+
+/* Links in Dropdown-Menüs verwenden normale Linkfarbe */
+.format-polizeinrw-section .dropdown-menu a,
+.format-polizeinrw-section .dropdown-menu.show a,
+.format-polizeinrw-section .action-menu .dropdown-menu a,
+.format-polizeinrw-section [id^="action-menu-"] .dropdown-menu a {
+    color: var(--polizeinrw-text-dark) !important;
+}
+
+.format-polizeinrw-section .dropdown-menu a:hover,
+.format-polizeinrw-section .dropdown-menu.show a:hover,
+.format-polizeinrw-section .action-menu .dropdown-menu a:hover,
+.format-polizeinrw-section [id^="action-menu-"] .dropdown-menu a:hover {
+    color: var(--polizeinrw-accent);
+    background-color: #f8f9fa;
 }
 
 /* Control Menu Dropdowns in Sections - besonders wichtig für eingeklappte Sections */
@@ -753,10 +875,10 @@ body.editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions,
 .format-polizeinrw-section .section-control-menu .dropdown-menu,
 .format-polizeinrw-section .polizeinrw-control-menu .dropdown-menu.show,
 .format-polizeinrw-section .section-control-menu .dropdown-menu.show {
-    z-index: 9999 !important;
+    z-index: 9999;
     /* Stelle sicher, dass Dropdowns auch bei eingeklappten Sections sichtbar sind */
-    position: absolute !important;
-    overflow: visible !important;
+    position: absolute;
+    overflow: visible;
 }
 
 /* Action Menu Dropdowns (für Section Control Menu) */
@@ -764,9 +886,9 @@ body.editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions,
 .format-polizeinrw-section .action-menu .dropdown-menu.show,
 .format-polizeinrw-section [id^="action-menu-"] .dropdown-menu,
 .format-polizeinrw-section [id^="action-menu-"] .dropdown-menu.show {
-    z-index: 9999 !important;
-    position: absolute !important;
-    overflow: visible !important;
+    z-index: 9999;
+    position: absolute;
+    overflow: visible;
 }
 
 /* Stelle sicher, dass Sections selbst keinen zu hohen z-index haben */
@@ -793,20 +915,9 @@ body.editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions,
 .format-polizeinrw .dropdown-menu.show,
 .format-polizeinrw [id^="action-menu-"] .dropdown-menu,
 .format-polizeinrw [id^="action-menu-"] .dropdown-menu.show {
-    z-index: 9999 !important;
+    z-index: 9999;
 }
 
-/* ============================================
-   Dark Theme Support (optional)
-   ============================================ */
-/* Section Background für dunklen Hintergrund wie im Bild */
-.format-polizeinrw .course-content {
-    /* Auskommentiert - kann bei Bedarf aktiviert werden 
-    background-color: var(--polizeinrw-primary);
-    padding: 30px;
-    border-radius: 8px;
-    */
-}
 
 /* Falls dunkler Hintergrund gewünscht, Titel anpassen */
 .format-polizeinrw.dark-theme .polizeinrw-card-title a {
@@ -820,13 +931,13 @@ body.editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions,
     .polizeinrw-activity-grid {
         display: block;
     }
-    
+
     .polizeinrw-activity-card-wrapper {
         display: inline-block;
         page-break-inside: avoid;
         margin: 10px;
     }
-    
+
     .polizeinrw-card-actions,
     .polizeinrw-bulk-select {
         display: none;
@@ -841,7 +952,7 @@ body.editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions,
     .polizeinrw-card-actions {
         transition: none;
     }
-    
+
     .polizeinrw-activity-card:hover {
         transform: none;
     }
@@ -882,13 +993,13 @@ body.editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions,
 }
 
 .polizeinrw-color-circle.selected {
-    border-color: #333333;
+    border-color: #333;
     /*box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3);*/
     transform: scale(1.1);
 }
 
 .polizeinrw-color-circle:focus {
-    outline: 3px solid var(--polizeinrw-accent, #0066cc);
+    outline: 3px solid var(--polizeinrw-accent, #06c);
     outline-offset: 3px;
 }
 
@@ -897,6 +1008,62 @@ body.editing .polizeinrw-activity-card-wrapper .polizeinrw-card-actions,
 }
 
 .polizeinrw-color-circle:focus-visible {
-    outline: 3px solid var(--polizeinrw-accent, #0066cc);
+    outline: 3px solid var(--polizeinrw-accent, #06c);
     outline-offset: 3px;
+}
+
+/* ============================================
+   Schloss-Symbol (Restriction Lock)
+   ============================================ */
+.polizeinrw-section-inner .restrictionlock img,
+.polizeinrw-section-inner [class*="restrictionlock"] img,
+.course-section-header .restrictionlock img,
+.course-section-header [class*="restrictionlock"] img {
+    filter: brightness(0) saturate(100%) invert(1);
+    /* Verwende Template-Hinweisfarbe durch CSS-Filter */
+    /* Da wir die Farbe nicht direkt setzen können, verwenden wir einen Filter */
+    /* Für gelb (#FFD700) müssen wir einen speziellen Filter verwenden */
+}
+
+/* Alternative: Verwende CSS-Mask oder direktes Styling wenn möglich */
+.polizeinrw-section-inner .restrictionlock,
+.polizeinrw-section-inner [class*="restrictionlock"],
+.course-section-header .restrictionlock,
+.course-section-header [class*="restrictionlock"] {
+    color: var(--polizeinrw-template-notice);
+}
+
+.polizeinrw-section-inner .restrictionlock svg,
+.polizeinrw-section-inner [class*="restrictionlock"] svg,
+.course-section-header .restrictionlock svg,
+.course-section-header [class*="restrictionlock"] svg {
+    fill: var(--polizeinrw-template-notice);
+    color: var(--polizeinrw-template-notice);
+}
+
+/* ============================================
+   Availability Info (Verfügbarkeitsinformationen)
+   ============================================ */
+.polizeinrw-section-inner .availabilityinfo,
+.polizeinrw-section-inner .section_availability .availabilityinfo,
+.polizeinrw-section-inner .availabilityinfo.isrestricted {
+    background-color: var(--polizeinrw-template-notice);
+    color: var(--polizeinrw-template-notice-text);
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 8px 0;
+}
+
+.polizeinrw-section-inner .availabilityinfo a,
+.polizeinrw-section-inner .section_availability .availabilityinfo a,
+.polizeinrw-section-inner .availabilityinfo.isrestricted a {
+    color: var(--polizeinrw-template-notice-text) !important;
+    text-decoration: underline;
+}
+
+.polizeinrw-section-inner .availabilityinfo a:hover,
+.polizeinrw-section-inner .section_availability .availabilityinfo a:hover,
+.polizeinrw-section-inner .availabilityinfo.isrestricted a:hover {
+    color: var(--polizeinrw-template-notice-text) !important;
+    text-decoration: underline;
 }
