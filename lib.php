@@ -172,13 +172,13 @@ class format_polizeinrw extends core_courseformat\base {
         if ($courseformatoptions === false) {
             // Standard-Farbwerte für benutzerdefiniertes Template.
             $defaultcustomcolors = [
-                'main' => '#004B87',
-                'secondary' => '#0056A3',
-                'notice' => '#FFD700',
-                'notice_text' => '#000000',
-                'text' => '#FFFFFF',
-                'activity_icon' => '#004B87',
-                'activity_icon_bg' => '#E6F0F7',
+                'main' => '#1a2e56',
+                'secondary' => '#475777',
+                'notice' => '#e8e227',
+                'notice_text' => '#000',
+                'text' => '#fff',
+                'activity_icon' => '#1a2e56',
+                'activity_icon_bg' => '#f7f7f7',
             ];
 
             $courseformatoptions = [

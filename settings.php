@@ -37,17 +37,17 @@ if ($hassiteconfig) {
         // Each template has: main color, secondary color, notice color, notice text color, text color, activity icon color, activity icon background color.
         $defaultcolors = [
             1 => [
-                'main' => '#004B87',      // Polizei Blau
-                'secondary' => '#0056A3',  // Hellblau
-                'notice' => '#FFD700',     // Gelb/Gold
-                'notice_text' => '#000000', // Schwarz
-                'text' => '#FFFFFF',       // Weiß
-                'activity_icon' => '#004B87', // Aktivitäts-Icon Farbe
-                'activity_icon_bg' => '#E6F0F7', // Aktivitäts-Icon Hintergrundfarbe
+                'main' => '#1a2e56',      // Polizei Blau
+                'secondary' => '#475777',  // Hellblau
+                'notice' => '#e8e227',     // Gelb/Gold
+                'notice_text' => '#000', // Schwarz
+                'text' => '#fff',       // Weiß
+                'activity_icon' => '#1a2e56', // Aktivitäts-Icon Farbe
+                'activity_icon_bg' => '#f7f7f7', // Aktivitäts-Icon Hintergrundfarbe
             ],
             2 => [
-                'main' => '#FFD700',       // Gelb/Gold
-                'secondary' => '#FFE44D',   // Hellgelb
+                'main' => '#1e5a64',       // Gelb/Gold
+                'secondary' => '#4b7b83',   // Hellgelb
                 'notice' => '#DC3545',      // Rot
                 'notice_text' => '#FFFFFF', // Weiß
                 'text' => '#000000',        // Schwarz

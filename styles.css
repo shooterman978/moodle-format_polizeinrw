@@ -183,10 +183,10 @@
 /* Minimale Höhe für eingeklappte Sections wird durch min-height: 76px
    auf .polizeinrw-section-content gesteuert (siehe oben) */
 
-/* Collapse-Container - muss overflow: visible haben, damit Dropdowns sichtbar sind */
+/* Collapse-Container - muss overflow: hidden haben, damit der Inhalt nicht abgeschnitten wird */
 .format-polizeinrw-section .content.collapse,
 .format-polizeinrw-section .course-content-item-content {
-    overflow: visible;
+    overflow: hidden;
 }
 
 /* ============================================
